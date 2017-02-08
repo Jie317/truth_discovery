@@ -11,7 +11,11 @@ public class App
 {
     public static void main( String[] args )
     {
-    	scrape("Picasso", "BornIn");
+    	//scrape("Picasso", "BornIn");
+    	
+    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
+    	Excel excel = new Excel(excel_file);
+    	excel.readExcel();
     }
     
     public static void scrape(String sujet, String predicat){
