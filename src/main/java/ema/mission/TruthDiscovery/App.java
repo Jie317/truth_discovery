@@ -22,7 +22,8 @@ public class App
 	        for(Element e:divResult){
 	        	String titre=e.getElementsByClass("r").get(0).text();
 	        	String lien=e.getElementsByClass("r").get(0).getElementsByAttribute("href").attr("href").replace("/url?q=", "");
-	        	System.out.println(titre+" "+lien);
+	        	String description=e.getElementsByClass("s").get(0).getElementsByClass("st").get(0).text();
+	        	System.out.println(titre+" "+lien+"\n"+description+"\n");
 	        }
 	    }
 	    
