@@ -3,9 +3,9 @@ package ema.mission.TruthDiscovery;
 public class Couple {
 	
 	private String valeur;
-	private float confiance;
+	private String confiance;
 	
-	public Couple(String valeur ,float confiance){
+	public Couple(String valeur ,String confiance){
 		this.valeur=valeur;
 		this.confiance=confiance;
 	}
@@ -26,14 +26,17 @@ public class Couple {
 	/**
 	 * @return the confiance
 	 */
-	public float getConfiance() {
+	public String getConfiance() {
 		return confiance;
 	}
 	/**
 	 * @param confiance the confiance to set
 	 */
-	public void setConfiance(float confiance) {
+	public void setConfiance(String confiance) {
 		this.confiance = confiance;
 	} 
 
+	public String toString(){
+		return("valeur: " +this.valeur+" confiance: "+this.confiance+"-");
+	}
 }

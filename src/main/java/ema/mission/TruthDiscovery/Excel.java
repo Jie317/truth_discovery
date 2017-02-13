@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,15 +22,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Excel {
 
 	private String path;
-	private Map<String, Couple> donnees;
+	private Map<String, List<Couple>> donnees;
 
 	public Excel(String path) {
 		this.path = path;
-		this.donnees = new HashMap<String, Couple>();
+		this.donnees = new HashMap<String, List<Couple>>();
 	}
 
-	@SuppressWarnings("deprecation")
-	public void readExcel() {
+	public Map<String, List<Couple>> readExcel() {
 
 		FileInputStream excelFile;
 		try {
@@ -53,20 +55,20 @@ public class Excel {
 						if (currentCell.getCellTypeEnum() == CellType.STRING) {
 							Pattern p = Pattern.compile("http://dbpedia.org/\\w+/");
 							String[] item = p.split(currentCell.getStringCellValue());
+							List<Couple> valeurs = new ArrayList<Couple>();
 							for (int i = 1; i < item.length; i++) {
 								item[i] = item[i].substring(0, item[i].length() - 1);
-								if(i>1){
+								if (i > 1) {
 									String val = item[i].substring(0, item[i].indexOf("\t"));
-									String conf =item[i].substring( item[i].indexOf("\t")+1);
-									System.out.println(conf+"-");
-									donnees.put(item[1], new Couple(val,Float.parseFloat(conf)));
+									String conf = item[i].substring(item[i].indexOf("\t") + 1);
+									valeurs.add(new Couple(val, conf));
 								}
 							}
+							donnees.put(item[1], valeurs);
 						} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-							System.out.print(currentCell.getNumericCellValue() + "--");
+
 						}
 					}
-					System.out.println();
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -76,6 +78,16 @@ public class Excel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return donnees;
+	}
 
+	public void display() {
+		for (Entry<String, List<Couple>> entry : donnees.entrySet()) {
+			System.out.print(entry.getKey() + "->");
+			for (Couple c : entry.getValue()) {
+				System.out.print(c.toString());
+			}
+			System.out.println();
+		}
 	}
 }
