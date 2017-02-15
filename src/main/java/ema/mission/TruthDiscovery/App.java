@@ -1,13 +1,9 @@
 package ema.mission.TruthDiscovery;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class App 
 {
@@ -18,15 +14,25 @@ public class App
     	//excel.readExcel();
     	
     	boolean over=false;
-    	Scanner scan=new Scanner(System.in);
     	while(!over){
+        	Scanner scan=new Scanner(System.in);
     		System.out.println("Entrez le sujet recherché ");
     		String sujet=scan.nextLine();
     		System.out.println("Entrez la valeur recherchée");
     		String valeur=scan.nextLine();
     		System.out.println("Sur quelle page de Google rechercher ?");
     		int page=scan.nextInt();
-    		Scraper.scrape(sujet, "BornIn", valeur, page);
+    		Map<String, ArrayList<String>> results=Scraper.getResults(sujet, "Born In", valeur, page);
+    		for (Map.Entry<String, ArrayList<String>> entry : results.entrySet()){
+    			String url=entry.getKey();
+    			ArrayList<String> contexts=entry.getValue();
+    			System.out.println("\n"+url+"\n\n");
+    			for(String context:contexts){
+    				System.out.println(context+"\n");
+    			}
+    			
+    		}
+
     	}
     }
     
