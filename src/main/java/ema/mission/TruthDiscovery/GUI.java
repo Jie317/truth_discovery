@@ -13,6 +13,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
+import javax.swing.JCheckBox;
+import javax.swing.SwingConstants;
 
 public class GUI {
 
@@ -54,7 +56,7 @@ public class GUI {
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 448, 21);
+		panel.setBounds(0, 0, 448, 35);
 		frame.getContentPane().add(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 		
@@ -63,73 +65,46 @@ public class GUI {
 		
 		textField = new JTextField();
 		panel.add(textField);
-		textField.setColumns(10);
+		textField.setColumns(8);
 		
 		JLabel lblNewLabel_1 = new JLabel("Valeur");
 		panel.add(lblNewLabel_1);
 		
 		textField_1 = new JTextField();
 		panel.add(textField_1);
-		textField_1.setColumns(10);
+		textField_1.setColumns(8);
 		
 		JLabel lblNewLabel_2 = new JLabel("Page");
 		panel.add(lblNewLabel_2);
 		
-		JLabel label = new JLabel("");
-		panel.add(label);
-		
 		textField_2 = new JTextField();
 		panel.add(textField_2);
-		textField_2.setColumns(10);
-		
-		JLabel label_1 = new JLabel("");
-		panel.add(label_1);
-		
-		JLabel label_2 = new JLabel("");
-		panel.add(label_2);
-		
-		JLabel label_3 = new JLabel("");
-		panel.add(label_3);
+		textField_2.setColumns(3);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(0, 21, 448, 37);
+		panel_1.setBounds(1, 40, 448, 37);
 		frame.getContentPane().add(panel_1);
 		
 		JButton btnNewButton = new JButton("Rechercher");
 		panel_1.add(btnNewButton);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(0, 56, 448, 214);
+		panel_2.setBounds(0, 76, 448, 143);
 		frame.getContentPane().add(panel_2);
-		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.X_AXIS));
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 		
-		JPanel panel_3 = new JPanel();
-		panel_2.add(panel_3);
-		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
+		JCheckBox chckbxNewCheckBox = new JCheckBox("LinkedIn Ireland Unlimited Company, Wilton Plaza, Wilton Place, Dublin 2. LinkedIn is a registered business name of LinkedIn Ireland Unlimited Company. LinkedIn and the LinkedIn logo are registered trademarks of LinkedIn.");
+		chckbxNewCheckBox.setToolTipText("");
+		panel_2.add(chckbxNewCheckBox);
 		
-		JButton btnNewButton_1 = new JButton("New button");
-		panel_3.add(btnNewButton_1);
+		JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
+		panel_2.add(chckbxNewCheckBox_2);
 		
-		JButton btnNewButton_2 = new JButton("New button");
-		panel_3.add(btnNewButton_2);
+		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
+		panel_2.add(chckbxNewCheckBox_1);
 		
-		JButton btnNewButton_5 = new JButton("New button");
-		panel_3.add(btnNewButton_5);
-		
-		JButton btnNewButton_3 = new JButton("New button");
-		panel_3.add(btnNewButton_3);
-		
-		JButton btnNewButton_4 = new JButton("New button");
-		panel_3.add(btnNewButton_4);
-		
-		JPanel panel_4 = new JPanel();
-		panel_2.add(panel_4);
-		
-		JTextArea textArea = new JTextArea();
-		textArea.setLineWrap(true);
-		textArea.setEditable(false);
-		textArea.setColumns(25);
-		textArea.setRows(10);
-		panel_4.add(textArea);
+		JButton btnNewButton_1 = new JButton("Page suivant");
+		btnNewButton_1.setBounds(174, 231, 135, 27);
+		frame.getContentPane().add(btnNewButton_1);
 	}
 }
