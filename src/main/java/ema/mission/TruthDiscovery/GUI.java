@@ -15,6 +15,7 @@ import java.awt.FlowLayout;
 import javax.swing.JTextArea;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
+import java.awt.Checkbox;
 
 public class GUI {
 
@@ -103,8 +104,11 @@ public class GUI {
 		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
 		panel_2.add(chckbxNewCheckBox_1);
 		
-		JButton btnNewButton_1 = new JButton("Page suivant");
-		btnNewButton_1.setBounds(174, 231, 135, 27);
-		frame.getContentPane().add(btnNewButton_1);
+		JPanel panel_3 = new JPanel();
+		panel_3.setBounds(0, 233, 448, 37);
+		frame.getContentPane().add(panel_3);
+		
+		JButton btnNewButton_1 = new JButton("Valider et page suivant...");
+		panel_3.add(btnNewButton_1);
 	}
 }
