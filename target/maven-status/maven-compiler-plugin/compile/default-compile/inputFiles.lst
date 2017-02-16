@@ -1,3 +1,9 @@
-D:\Workspace\Git\truthdiscovery\src\main\java\ema\mission\TruthDiscovery\App.java
-D:\Workspace\Git\truthdiscovery\src\main\java\ema\mission\TruthDiscovery\Excel.java
-D:\Workspace\Git\truthdiscovery\src\main\java\ema\mission\TruthDiscovery\Couple.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\model\Excel.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\view\GUI.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\model\Scraper.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\controller\Bdd.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\controller\LogController.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\model\Couple.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\app\App.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\view\Log.java
+C:\Users\Charlie\git\truthdiscovery\src\main\java\ema\mission\model\User.java

@@ -1,5 +1,6 @@
 package ema.mission.app;
 
+import ema.mission.controller.Bdd;
 import ema.mission.model.User;
 import ema.mission.view.Log;
 
@@ -9,7 +10,7 @@ public class App
     {
     	User u = new User();
 		Log l = new Log(u);
-    	
+    	Bdd.ConnectDB();
 //    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
 //    	Excel excel = new Excel(excel_file);
 //    	excel.readExcel();
