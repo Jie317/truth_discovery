@@ -1,15 +1,19 @@
-package ema.mission.TruthDiscovery;
+package ema.mission.app;
 
-import ema.mission.TruthDiscovery.Excel;
+import ema.mission.model.User;
+import ema.mission.view.Log;
 
 public class App 
 {
     public static void main( String[] args )
     {
-    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
-    	Excel excel = new Excel(excel_file);
-    	excel.readExcel();
-    	excel.display();
+    	User u = new User();
+		Log l = new Log(u);
+    	
+//    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
+//    	Excel excel = new Excel(excel_file);
+//    	excel.readExcel();
+//    	excel.display();
     	
 //    	boolean over=false;
 //    	while(!over){

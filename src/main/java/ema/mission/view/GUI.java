@@ -1,4 +1,4 @@
-package ema.mission.TruthDiscovery;
+package ema.mission.view;
 
 import java.awt.EventQueue;
 
