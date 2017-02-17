@@ -1,4 +1,4 @@
-package ema.mission.view;
+package ema.mission.TruthDiscovery;
 
 import java.awt.EventQueue;
 
@@ -16,13 +16,16 @@ import javax.swing.JTextArea;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import java.awt.Checkbox;
+import javax.swing.JScrollPane;
+import javax.swing.JList;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GUI {
 
 	private JFrame frame;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JTextField textField_2;
 
 	/**
 	 * Launch the application.
@@ -75,13 +78,6 @@ public class GUI {
 		panel.add(textField_1);
 		textField_1.setColumns(8);
 		
-		JLabel lblNewLabel_2 = new JLabel("Page");
-		panel.add(lblNewLabel_2);
-		
-		textField_2 = new JTextField();
-		panel.add(textField_2);
-		textField_2.setColumns(3);
-		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(1, 40, 448, 37);
 		frame.getContentPane().add(panel_1);
@@ -89,26 +85,27 @@ public class GUI {
 		JButton btnNewButton = new JButton("Rechercher");
 		panel_1.add(btnNewButton);
 		
-		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(0, 76, 448, 143);
-		frame.getContentPane().add(panel_2);
-		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
-		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("LinkedIn Ireland Unlimited Company, Wilton Plaza, Wilton Place, Dublin 2. LinkedIn is a registered business name of LinkedIn Ireland Unlimited Company. LinkedIn and the LinkedIn logo are registered trademarks of LinkedIn.");
+		JCheckBox chckbxNewCheckBox = new JCheckBox("url");
+		chckbxNewCheckBox.setBounds(0, 0, 42, 25);
+		frame.getContentPane().add(chckbxNewCheckBox);
 		chckbxNewCheckBox.setToolTipText("");
-		panel_2.add(chckbxNewCheckBox);
-		
-		JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
-		panel_2.add(chckbxNewCheckBox_2);
-		
-		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
-		panel_2.add(chckbxNewCheckBox_1);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(0, 233, 448, 37);
 		frame.getContentPane().add(panel_3);
 		
-		JButton btnNewButton_1 = new JButton("Valider et page suivant...");
+		JButton btnNewButton_1 = new JButton("Accepter");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
 		panel_3.add(btnNewButton_1);
+		
+		JButton btnRefuser = new JButton("Refuser");
+		panel_3.add(btnRefuser);
+		
+		JList list_1 = new JList();
+		list_1.setBounds(0, 76, 448, 157);
+		frame.getContentPane().add(list_1);
 	}
 }
