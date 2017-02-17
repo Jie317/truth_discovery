@@ -42,8 +42,22 @@ public class LogController implements ActionListener, KeyListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		String email=this.view.getEmail().getText();
+		String password=new String(this.view.getPass().getPassword());
 		if (e.getSource() == this.view.getBtnConnexion()) {
-			this.user = Bdd.authenticate(this.view.getEmail().getText(), new String(this.view.getPass().getPassword()));
+			this.user = Bdd.authenticate(email, password);
+			
+			if(this.user==null){
+				//Montrer la popup "Cet utilisateur n'existe pas, voulez-vous le créer ?"
+				//Si oui, appelle :
+				Bdd.createUser(email, password);
+				//Puis ferme cette vue et ouvre la nouvelle avec :
+				this.user=new User(email);
+			}else if(this.user.getEmail().equals("WrongPassword")){
+				//Montrer la popup "mauvais mot de passe". Cette popup a juste un bouton "ok" ou "fermer" et ne fait rien d'autre"
+			}else{
+				//Fermer cette vue et ouvrir la nouvelle
+			}
 		}
 	}
 

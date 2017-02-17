@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import ema.mission.model.User;
 
 public class Bdd {
@@ -49,19 +51,46 @@ public class Bdd {
 		Connection conn=null;
 		PreparedStatement preparedStatement = null;
 		User u=null;
+		
 		String query="SELECT * FROM Users WHERE email=? AND password=?";
 		conn= ConnectDB();
 		
-		try {
-			preparedStatement = conn.prepareStatement(query);
+		String checkExistQuery="SELECT * FROM Users WHERE email=?";
+		try{
+			preparedStatement=conn.prepareStatement(checkExistQuery);
 			preparedStatement.setString(1, email);
-			preparedStatement.setString(2, password);
-			ResultSet rs = preparedStatement.executeQuery();
+			ResultSet rs=preparedStatement.executeQuery();
 			if(rs.first()){
-				u=new User(email);
+				String pwd=rs.getString("password");
+				boolean connected=BCrypt.checkpw(password, pwd);
+				if(connected){
+					u=new User(email);
+				}else{
+					u=new User("WrongPassword");
+				}
 			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return u;
+	}
+	
+	public static User createUser(String email, String password){
 		
-		} catch (SQLException e) {
+		PreparedStatement preparedStatement=null;
+		User u=null;
+		Connection conn=ConnectDB();
+		
+		String query="INSERT INTO Users (email, password) VALUES (?,?)";
+		
+		String hashPass=BCrypt.hashpw(password, BCrypt.gensalt());
+		try{
+			preparedStatement=conn.prepareStatement(query);
+			preparedStatement.setString(1, email);
+			preparedStatement.setString(2, hashPass);
+			preparedStatement.executeUpdate();
+		}catch (Exception e){
 			e.printStackTrace();
 		}
 		
