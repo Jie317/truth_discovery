@@ -26,7 +26,6 @@ public class GUI {
 	private JFrame frame;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JTextField textField_2;
 
 	/**
 	 * Launch the application.
@@ -78,13 +77,6 @@ public class GUI {
 		textField_1 = new JTextField();
 		panel.add(textField_1);
 		textField_1.setColumns(8);
-		
-		JLabel lblNewLabel_2 = new JLabel("Page");
-		panel.add(lblNewLabel_2);
-		
-		textField_2 = new JTextField();
-		panel.add(textField_2);
-		textField_2.setColumns(3);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(1, 40, 448, 37);
