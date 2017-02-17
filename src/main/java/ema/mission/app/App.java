@@ -1,18 +1,24 @@
-package ema.mission.TruthDiscovery;
+package ema.mission.app;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
+
+import ema.mission.controller.Bdd;
+import ema.mission.model.Excel;
+import ema.mission.model.Scraper;
+import ema.mission.model.User;
+import ema.mission.view.Log;
 
 public class App 
 {
     public static void main( String[] args )
     {
-    	//String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
-    	//Excel excel = new Excel(excel_file);
-    	//excel.readExcel();
-    	
+    	User u = new User();
+		Log l = new Log(u);
+    }
+    
+    public static void testsCharlie(){
     	boolean over=false;
     	while(!over){
         	Scanner scan=new Scanner(System.in);
@@ -32,8 +38,19 @@ public class App
     			}
     			
     		}
-
     	}
+		User u=Bdd.authenticate("charlie.auzet@gmail.com", "sltcava");
+    }
+    
+    public static void testsPierre(){
+    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
+    	Excel excel = new Excel(excel_file);
+    	excel.readExcel();
+    	excel.display(); 	
+    }
+    
+    public static void testsJie(){
+    	
     }
     
 }

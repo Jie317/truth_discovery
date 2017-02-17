@@ -1,4 +1,4 @@
-package ema.mission.TruthDiscovery;
+package ema.mission.model;
 
 import java.io.IOException;
 import java.text.Normalizer;

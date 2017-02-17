@@ -1,9 +1,10 @@
-package ema.mission.TruthDiscovery;
+package ema.mission.model;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,10 +62,17 @@ public class Excel {
 								if (i > 1) {
 									String val = item[i].substring(0, item[i].indexOf("\t"));
 									String conf = item[i].substring(item[i].indexOf("\t") + 1);
+									try{
+										val = java.net.URLDecoder.decode(val, "UTF-8");
+										conf = java.net.URLDecoder.decode(conf, "UTF-8");
+									}catch(UnsupportedEncodingException e){
+										System.out.println(e.getMessage().toString());
+									}
+									
 									valeurs.add(new Couple(val, conf));
 								}
 							}
-							donnees.put(item[1], valeurs);
+							donnees.put(java.net.URLDecoder.decode(item[1], "UTF-8"), valeurs);
 						} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
 
 						}

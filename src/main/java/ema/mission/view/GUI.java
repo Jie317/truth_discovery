@@ -1,4 +1,4 @@
-package ema.mission.TruthDiscovery;
+package ema.mission.view;
 
 import java.awt.EventQueue;
 
@@ -16,10 +16,6 @@ import javax.swing.JTextArea;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import java.awt.Checkbox;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class GUI {
 
@@ -93,27 +89,26 @@ public class GUI {
 		JButton btnNewButton = new JButton("Rechercher");
 		panel_1.add(btnNewButton);
 		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("url");
-		chckbxNewCheckBox.setBounds(0, 0, 42, 25);
-		frame.getContentPane().add(chckbxNewCheckBox);
+		JPanel panel_2 = new JPanel();
+		panel_2.setBounds(0, 76, 448, 143);
+		frame.getContentPane().add(panel_2);
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
+		
+		JCheckBox chckbxNewCheckBox = new JCheckBox("LinkedIn Ireland Unlimited Company, Wilton Plaza, Wilton Place, Dublin 2. LinkedIn is a registered business name of LinkedIn Ireland Unlimited Company. LinkedIn and the LinkedIn logo are registered trademarks of LinkedIn.");
 		chckbxNewCheckBox.setToolTipText("");
+		panel_2.add(chckbxNewCheckBox);
+		
+		JCheckBox chckbxNewCheckBox_2 = new JCheckBox("New check box");
+		panel_2.add(chckbxNewCheckBox_2);
+		
+		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("New check box");
+		panel_2.add(chckbxNewCheckBox_1);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(0, 233, 448, 37);
 		frame.getContentPane().add(panel_3);
 		
-		JButton btnNewButton_1 = new JButton("Accepter");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
+		JButton btnNewButton_1 = new JButton("Valider et page suivant...");
 		panel_3.add(btnNewButton_1);
-		
-		JButton btnRefuser = new JButton("Refuser");
-		panel_3.add(btnRefuser);
-		
-		JList list_1 = new JList();
-		list_1.setBounds(0, 76, 448, 157);
-		frame.getContentPane().add(list_1);
 	}
 }
