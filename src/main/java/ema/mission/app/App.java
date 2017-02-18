@@ -18,8 +18,8 @@ public class App
     {
 //    	User u = new User();
 //		Log l = new Log(u);
-//    	testsJie();
-    	testsCharlie();
+    	testsJie();
+//    	testsCharlie();
     }
     
     public static void testsCharlie(){

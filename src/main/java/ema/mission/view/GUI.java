@@ -2,6 +2,7 @@ package ema.mission.view;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -90,8 +91,13 @@ public class GUI {
 		
 		listModel = new DefaultListModel<>();
 		results = new JList<String>(listModel);
-		results.setBounds(0, 76, 448, 157);
-		frame.getContentPane().add(results);
+		results.setVisibleRowCount(10);
+		
+		
+		JScrollPane showResults = new JScrollPane(results);
+		showResults.setBounds(0, 76, 448, 157);
+		frame.getContentPane().add(showResults);
+		
 	}
 
 	public JFrame getFrame() {

@@ -32,6 +32,10 @@ public class GuiControleur implements ActionListener{
 		if (command.equals(RECHERCHER)) {
 			System.out.println("Rechercher ... ");
 			gui.getListModel().removeAllElements();
+			gui.getListModel().addElement("<html>" + "http://sdddf.com_test" + "<br>" + "test fffffffffffffdsaaa"
+					+ "aaaaest fffffffffffffdsaaaaaaaest f"
+					+ "fffffffffffdsaaaaaaaaa"
+					+ "aaaaaaaeeeeeeeeeeee" + "</html>");
 			String sujet = gui.getSujet().getText();
 			String valeur = gui.getValeur().getText();
 			String pageStr = gui.getPage().getText();
@@ -45,7 +49,14 @@ public class GuiControleur implements ActionListener{
 			
 			// Afficher les résultats
 			results = Scraper.getResults(sujet, "Born In", valeur, page);
-			System.out.println(results.size());
+			
+			if (results.size() == 0) {
+				JOptionPane.showMessageDialog(gui.getFrame(), "Rien trouvé.",
+						"", JOptionPane.OK_OPTION);
+				
+			}
+			
+			
 			resultList = new ArrayList<String>();
     		for (Map.Entry<String, ArrayList<String>> entry: results.entrySet()){
     			String url = entry.getKey();
@@ -71,7 +82,7 @@ public class GuiControleur implements ActionListener{
     		accepted = new ArrayList<String>();
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
     		for (int i: indicesChoisis) {
-    			gui.getResults().remove(i);
+    			gui.getListModel().remove(i);
     			accepted.add(resultList.get(i));
     			storeToDatabase(accepted); 
     		}
@@ -82,10 +93,11 @@ public class GuiControleur implements ActionListener{
     		System.out.println("Deleting refused items...");
     		int[] indicesChoisis1 = gui.getResults().getSelectedIndices();
     		for (int i: indicesChoisis1) {
-    			gui.getResults().remove(i);
+    			gui.getListModel().remove(i);
     		}
     	}
-			
+		
+    	//TODO: wrap lines
 		
 	}
 
