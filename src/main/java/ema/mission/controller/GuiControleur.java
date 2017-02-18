@@ -20,6 +20,10 @@ public class GuiControleur implements ActionListener{
 	final String REFUSER = "refuser";
 	private GUI gui;
 	
+	String sujet = "Picasso";
+	String valeur = "Malaga";
+	int page =1;
+	
 	Map<String, ArrayList<String>> results;
 	ArrayList<String> resultList;
 	ArrayList<String> accepted;
@@ -31,31 +35,27 @@ public class GuiControleur implements ActionListener{
 		// Rechercher
 		if (command.equals(RECHERCHER)) {
 			System.out.println("Rechercher ... ");
-			gui.getListModel().removeAllElements();
-			gui.getListModel().addElement("<html>" + "http://sdddf.com_test" + "<br>" + "test fffffffffffffdsaaa"
-					+ "aaaaest fffffffffffffdsaaaaaaaest f"
-					+ "fffffffffffdsaaaaaaaaa"
-					+ "aaaaaaaeeeeeeeeeeee" + "</html>");
-			String sujet = gui.getSujet().getText();
-			String valeur = gui.getValeur().getText();
-			String pageStr = gui.getPage().getText();
+			gui.getListModel().clear();
+
+	
+			// get the search tuple from database
+			// example
+			sujet = "Picasso";
+			valeur = "Malaga";
+			page =1;
 			
-			if (sujet.equals("") || valeur.equals("") || pageStr.equals("")) {
-				JOptionPane.showMessageDialog(gui.getFrame(), "Les entrées ne sont pas valides.",
-					"", JOptionPane.OK_OPTION);
-				return;
-			}
-			int page = Integer.parseInt(pageStr);
-			
+			gui.getSujet().setText(sujet);
+			gui.getValeur().setText(valeur);
+			gui.getPage().setText(Integer.toString(page));
+						
 			// Afficher les résultats
 			results = Scraper.getResults(sujet, "Born In", valeur, page);
 			
 			if (results.size() == 0) {
 				JOptionPane.showMessageDialog(gui.getFrame(), "Rien trouvé.",
-						"", JOptionPane.OK_OPTION);
+					"", JOptionPane.OK_OPTION);
 				
 			}
-			
 			
 			resultList = new ArrayList<String>();
     		for (Map.Entry<String, ArrayList<String>> entry: results.entrySet()){
@@ -63,15 +63,14 @@ public class GuiControleur implements ActionListener{
     			ArrayList<String> contexts = entry.getValue();
     			
        			for(String context: contexts){
-    				String item = "<html>" + url + "<br>" + context + "</html>";
+    				String item = "<html>From URL: " + url + "<br>Context: " 
+    						+ context + "<br><br></html>";
     				resultList.add(item);
     				
     				System.out.println(item);
     				gui.getListModel().addElement(item);
     				
-    				JTextArea newItem = new JTextArea();
-    				newItem.setText(item);
-    				gui.getResults().add(newItem);
+    				
     			}	
     		}
 		}
@@ -81,7 +80,9 @@ public class GuiControleur implements ActionListener{
     		System.out.println("Accepting selected items...");
     		accepted = new ArrayList<String>();
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
+    		
     		for (int i: indicesChoisis) {
+    			System.out.println(i);
     			gui.getListModel().remove(i);
     			accepted.add(resultList.get(i));
     			storeToDatabase(accepted); 
@@ -109,6 +110,9 @@ public class GuiControleur implements ActionListener{
 
 	public void setGui(GUI gui) {
 		this.gui = gui;
+		gui.getSujet().setText(sujet);
+		gui.getValeur().setText(valeur);
+		gui.getPage().setText(Integer.toString(page));
 	}
 
 	public String getRECHERCHER() {

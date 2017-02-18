@@ -6,12 +6,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import ema.mission.controller.GuiControleur;
 
 import javax.swing.JList;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.LineBorder;
+import javax.swing.JCheckBox;
 
 public class GUI {
 	private GuiControleur guiControleur;
@@ -22,6 +35,7 @@ public class GUI {
 	private JTextField page;
 	private JList<String> results;
 	private DefaultListModel<String> listModel;
+	private JScrollPane showResults;
 	
 
 	/**
@@ -39,46 +53,56 @@ public class GUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {	
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 448, 35);
+		panel.setBounds(100, 10, 500, 30);
 		frame.getContentPane().add(panel);
-		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+		panel.setLayout(new GridLayout(1, 5, 0, 0));
 		
 		JLabel lblNewLabel = new JLabel("Subjet");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblNewLabel);
 		
 		sujet = new JTextField();
+		sujet.setEditable(false);
 		panel.add(sujet);
 		sujet.setColumns(8);
 		
 		JLabel lblNewLabel_1 = new JLabel("Valeur");
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblNewLabel_1);
 		
 		valeur = new JTextField();
+		valeur.setEditable(false);
 		panel.add(valeur);
 		valeur.setColumns(8);
 		
 		JLabel lblPage = new JLabel("Page");
+		lblPage.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblPage);
 		
 		page = new JTextField();
+		page.setEditable(false);
 		panel.add(page);
 		page.setColumns(3);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(1, 40, 448, 37);
+		panel_1.setBounds(0, 40, 800, 35);
 		frame.getContentPane().add(panel_1);
 		
 		JButton btnNewButton = new JButton(guiControleur.getRECHERCHER());
 		btnNewButton.addActionListener(guiControleur);
 		panel_1.add(btnNewButton);
 		
+//		JCheckBox checkBox = new JCheckBox("New check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check boxNew check box");
+//		checkBox.setBounds(0, 0, 114, 25);
+//		frame.getContentPane().add(checkBox);
+		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBounds(0, 233, 448, 37);
+		panel_3.setBounds(0, 530, 800, 35);
 		frame.getContentPane().add(panel_3);
 		
 		JButton btnNewButton_1 = new JButton(guiControleur.getACCEPTER());
@@ -91,14 +115,32 @@ public class GUI {
 		
 		listModel = new DefaultListModel<>();
 		results = new JList<String>(listModel);
+//		results.setCellRenderer(new MyCellRenderer());
+		results.setSelectionModel(new DefaultListSelectionModel() {
+		    @Override
+		    public void setSelectionInterval(int index0, int index1) {
+		        if(super.isSelectedIndex(index0)) {
+		            super.removeSelectionInterval(index0, index1);
+		        }
+		        else {
+		            super.addSelectionInterval(index0, index1);
+		        }
+		    }
+		});
+	
+		results.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), 
+				"R\u00E9sultats sur Google", TitledBorder.CENTER, TitledBorder.TOP, 
+				null, new Color(255, 200, 0)));
 		results.setVisibleRowCount(10);
 		
 		
-		JScrollPane showResults = new JScrollPane(results);
-		showResults.setBounds(0, 76, 448, 157);
+		showResults = new JScrollPane(results);
+		showResults.setBounds(10, 80, 780, 450);
 		frame.getContentPane().add(showResults);
 		
 	}
+	
+	
 
 	public JFrame getFrame() {
 		return frame;
@@ -124,5 +166,7 @@ public class GUI {
 		return listModel;
 	}
 
-	
+	public JScrollPane getShowResults() {
+		return showResults;
+	}
 }
