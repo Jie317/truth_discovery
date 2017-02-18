@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JOptionPane;
+
 import ema.mission.model.User;
 import ema.mission.view.Log;
 
@@ -47,14 +49,17 @@ public class LogController implements ActionListener, KeyListener {
 		if (e.getSource() == this.view.getBtnConnexion()) {
 			this.user = Bdd.authenticate(email, password);
 			
-			if(this.user==null){
+			if(this.user==null){		
 				//Montrer la popup "Cet utilisateur n'existe pas, voulez-vous le créer ?"
-				//Si oui, appelle :
-				Bdd.createUser(email, password);
-				//Puis ferme cette vue et ouvre la nouvelle avec :
-				this.user=new User(email);
+				int option = JOptionPane.showConfirmDialog(null, "Cet utilisateur n'existe pas, voulez-vous le créer ?", "Création utilisateur", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(option == JOptionPane.OK_OPTION){
+					//Si oui, appelle :
+					Bdd.createUser(email, password);	
+					//Puis ferme cette vue et ouvre la nouvelle avec :
+					this.user=new User(email);
+				}
 			}else if(this.user.getEmail().equals("WrongPassword")){
-				//Montrer la popup "mauvais mot de passe". Cette popup a juste un bouton "ok" ou "fermer" et ne fait rien d'autre"
+				JOptionPane.showMessageDialog(this.view,"Mauvais mot de passe","Erreur mot de passe",JOptionPane.ERROR_MESSAGE);
 			}else{
 				//Fermer cette vue et ouvrir la nouvelle
 			}
