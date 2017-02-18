@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -95,5 +96,118 @@ public class Bdd {
 		}
 		
 		return u;
+	}
+	
+	public static void updateValeurs(ArrayList<ArrayList<String>> excelSources){
+		ArrayList<String> sujetsAlreadyInDb=new ArrayList<>();
+		ArrayList<String> valeursAlreadyInDB= new ArrayList<>();
+
+		
+		PreparedStatement preparedStatement=null;
+
+		Connection conn=ConnectDB();
+		String getValeursQuery="SELECT * FROM Sources";
+		String insertValeurQuery="INSERT INTO Valeurs (Sujet, Valeur) VALUES (?,?)";
+		
+		try{
+			preparedStatement=conn.prepareStatement(getValeursQuery);
+			ResultSet rs=preparedStatement.executeQuery();
+			while(rs.next()){
+				String sujet=rs.getString("Sujet");
+				String valeur=rs.getString("Valeur");
+				sujetsAlreadyInDb.add(sujet);
+				valeursAlreadyInDB.add(valeur);
+			}
+		}catch(Exception e){
+			
+		}
+		
+		for(ArrayList<String> valeurs: excelSources){
+			String sujet=valeurs.get(0);
+			for(int i=1;i<valeurs.size();i++){
+				String valeur=valeurs.get(i);
+				if(!sujetsAlreadyInDb.contains(sujet) && !valeursAlreadyInDB.contains(valeur)){
+					try {
+						PreparedStatement preparedStatement2=conn.prepareStatement(insertValeurQuery);
+						preparedStatement2.executeUpdate();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}				
+			}
+		}
+		
+		
+	}
+	
+	public static String[] getFirstUnjudgedValue(int userId){
+		PreparedStatement preparedStatement=null;
+		PreparedStatement preparedStatement2=null;
+		String subject="";
+		String value="";
+		String[] ret=new String[2];
+		
+		Connection conn=ConnectDB();
+		String query="SELECT * FROM Jugements WHERE Id_User=?";
+		String query2="SELECT * FROM Valeurs";
+		ArrayList<Integer> alreadySeen=new ArrayList<Integer>();
+		
+		try {
+			preparedStatement=conn.prepareStatement(query);
+			preparedStatement.setInt(1, userId);
+			ResultSet rs=preparedStatement.executeQuery();
+			while(rs.next()){
+				alreadySeen.add(rs.getInt("Id_Valeur"));
+			}
+			
+			preparedStatement2=conn.prepareStatement(query2);
+			ResultSet rs2=preparedStatement2.executeQuery();
+			while(rs.next()){
+				int idValeur=rs.getInt("Id");
+				if(!alreadySeen.contains(idValeur)){
+					subject=rs.getString("Sujet");
+					value=rs.getString("Valeur");
+					ret[0]=subject;
+					ret[1]=value;
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	public static void addJugement(String sujet, String valeur, String text, int idUser , boolean accepted){
+		PreparedStatement getValeurIdQuery=null;
+		PreparedStatement insertJugementQuery=null;
+		Connection conn=ConnectDB();
+		int valeurId=0;
+		
+		String valeurIdQuery="SELECT Id FROM Valeurs WHERE Sujet=? AND Valeur=?";
+		String jugementQuery="INSERT INTO Jugements (Id_Valeur, Accepted, Text, Id_User) VALUES (?,?,?,?)";
+
+		try {
+			getValeurIdQuery=conn.prepareStatement(valeurIdQuery);
+			getValeurIdQuery.setString(1, sujet);
+			getValeurIdQuery.setString(2, valeur);
+			ResultSet rs=getValeurIdQuery.executeQuery();
+			if(rs.first()){
+				valeurId=rs.getInt("Id");			
+			}
+			
+			insertJugementQuery=conn.prepareStatement(jugementQuery);
+			insertJugementQuery.setInt(1, valeurId);
+			insertJugementQuery.setBoolean(2, accepted);
+			insertJugementQuery.setString(3, text);
+			insertJugementQuery.setInt(4, idUser);
+			ResultSet rs2=insertJugementQuery.executeQuery();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
 	}
 }
