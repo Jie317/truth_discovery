@@ -1,60 +1,43 @@
-package ema.mission.TruthDiscovery;
-
-import java.awt.EventQueue;
+package ema.mission.view;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import javax.swing.JLabel;
-import java.awt.GridLayout;
-import javax.swing.JTextField;
-import javax.swing.JSplitPane;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import java.awt.FlowLayout;
 import javax.swing.JTextArea;
-import javax.swing.JCheckBox;
-import javax.swing.SwingConstants;
-import java.awt.Checkbox;
-import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import ema.mission.controller.GuiControleur;
+
 import javax.swing.JList;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class GUI {
+	private GuiControleur guiControleur;
 
 	private JFrame frame;
-	private JTextField textField;
-	private JTextField textField_1;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUI window = new GUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JTextField sujet;
+	private JTextField valeur;
+	private JTextField page;
+	private JList<String> results;
+	private DefaultListModel<String> listModel;
+	
 
 	/**
 	 * Create the application.
+	 * @param guiControleur 
+	 * @param string 
 	 */
-	public GUI() {
+	public GUI(String name, GuiControleur guiControleur) {
+		this.guiControleur = guiControleur;
+		frame = new JFrame(name);
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		frame = new JFrame();
+	private void initialize() {	
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -67,45 +50,73 @@ public class GUI {
 		JLabel lblNewLabel = new JLabel("Subjet");
 		panel.add(lblNewLabel);
 		
-		textField = new JTextField();
-		panel.add(textField);
-		textField.setColumns(8);
+		sujet = new JTextField();
+		panel.add(sujet);
+		sujet.setColumns(8);
 		
 		JLabel lblNewLabel_1 = new JLabel("Valeur");
 		panel.add(lblNewLabel_1);
 		
-		textField_1 = new JTextField();
-		panel.add(textField_1);
-		textField_1.setColumns(8);
+		valeur = new JTextField();
+		panel.add(valeur);
+		valeur.setColumns(8);
+		
+		JLabel lblPage = new JLabel("Page");
+		panel.add(lblPage);
+		
+		page = new JTextField();
+		panel.add(page);
+		page.setColumns(3);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(1, 40, 448, 37);
 		frame.getContentPane().add(panel_1);
 		
-		JButton btnNewButton = new JButton("Rechercher");
+		JButton btnNewButton = new JButton(guiControleur.getRECHERCHER());
+		btnNewButton.addActionListener(guiControleur);
 		panel_1.add(btnNewButton);
-		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("url");
-		chckbxNewCheckBox.setBounds(0, 0, 42, 25);
-		frame.getContentPane().add(chckbxNewCheckBox);
-		chckbxNewCheckBox.setToolTipText("");
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(0, 233, 448, 37);
 		frame.getContentPane().add(panel_3);
 		
-		JButton btnNewButton_1 = new JButton("Accepter");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
+		JButton btnNewButton_1 = new JButton(guiControleur.getACCEPTER());
+		btnNewButton_1.addActionListener(guiControleur);
 		panel_3.add(btnNewButton_1);
 		
-		JButton btnRefuser = new JButton("Refuser");
+		JButton btnRefuser = new JButton(guiControleur.getREFUSER());
+		btnRefuser.addActionListener(guiControleur);
 		panel_3.add(btnRefuser);
 		
-		JList list_1 = new JList();
-		list_1.setBounds(0, 76, 448, 157);
-		frame.getContentPane().add(list_1);
+		listModel = new DefaultListModel<>();
+		results = new JList<String>(listModel);
+		results.setBounds(0, 76, 448, 157);
+		frame.getContentPane().add(results);
 	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public JTextField getSujet() {
+		return sujet;
+	}
+
+	public JTextField getValeur() {
+		return valeur;
+	}
+
+	public JTextField getPage() {
+		return page;
+	}
+
+	public JList<String> getResults() {
+		return results;
+	}
+
+	public DefaultListModel<String> getListModel() {
+		return listModel;
+	}
+
+	
 }
