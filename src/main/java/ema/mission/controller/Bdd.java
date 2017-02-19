@@ -214,7 +214,7 @@ public class Bdd {
 			insertJugementQuery.setBoolean(2, accepted);
 			insertJugementQuery.setString(3, text);
 			insertJugementQuery.setInt(4, idUser);
-			ResultSet rs2=insertJugementQuery.executeQuery();
+			insertJugementQuery.executeUpdate();
 		} catch (SQLException e) {
 
 			e.printStackTrace();

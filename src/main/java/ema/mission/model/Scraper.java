@@ -22,13 +22,32 @@ public class Scraper {
 	}};
 	
 	
-	public static Map<String, ArrayList<String>> getResults(String sujet, String predicat, String valeur, int page){
-		Map<String, ArrayList<String>> results=new HashMap<String,ArrayList<String>>();
-		List<String> urls=scrape(sujet,"BornIn",valeur,page);
+	public static Map<String, String> getResults(String sujet, String predicat, String valeur, int page){
+		Map<String, String> results=new HashMap<String, String>();
+		List<String> urls=scrape(sujet,"Born+In",valeur,page);
 		
 		for(String url:urls){
 			ArrayList<String> context=getContext(url, sujet, valeur);
-			results.put(url, context);
+			String mergedContext="";
+			for(int i=0;i<context.size();i++){
+				String text=context.get(i);
+				if(i==context.size()-1){
+					mergedContext+=text;
+					break;
+				}
+				
+				String nextText=context.get(i+1);
+				if(!text.contains(nextText)){
+					mergedContext+=text+"<br>";
+				}else{
+					String textToMatch=text.replace(nextText, "");
+					if(textToMatch.contains(sujet) && textToMatch.contains(valeur)){
+						mergedContext+=textToMatch+"<br>";
+					}
+				}
+			}
+
+			results.put(url, mergedContext);
 		}
 		return results;
 	}
@@ -42,6 +61,7 @@ public class Scraper {
 		String url="https://www.google.com/search?as_q=" + sujet + "+" + predicat
 				+ "+" + valeur + "&as_eq=&as_nlo=&as_nhi=&lr=lang_en&cr=countryCA&as_qdr=all&as_sitesearch=&as_occt=any&safe=images&tbs=&as_filetype=&as_rights="
 				+ nbPage;
+		System.out.println(url);
 		try {
 			doc = Jsoup.connect(url).userAgent("Mozilla").ignoreHttpErrors(true).timeout(10000).get();
 			Elements divResult = doc.getElementsByClass("g");
@@ -83,16 +103,23 @@ public class Scraper {
 		
 		try {
 			doc = Jsoup.connect(url).userAgent("Mozilla").ignoreHttpErrors(true).timeout(10000).get();
-			Elements elements=doc.body().select("*");
+			Elements elements=doc.body().select("div");
 
 			
 			for(Element element:elements){
-				String textToMatch=Normalizer.normalize(element.ownText(), Normalizer.Form.NFD)
+				if(!element.hasText())
+					continue;
+				
+				String textToMatch=Normalizer.normalize(element.text(), Normalizer.Form.NFD)
 						   .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
 						   .toLowerCase();
 				
-				if(textToMatch.contains(value.toLowerCase()) && textToMatch.contains(sujet.toLowerCase())){
-				   	results.add(element.ownText());
+				String[] motsSujet=sujet.split(" ");
+				String reversedSujet=motsSujet[1]+" "+motsSujet[0];
+				boolean textMatch=textToMatch.contains(value.toLowerCase()) && textToMatch.contains(sujet.toLowerCase()) && textToMatch.contains("born");
+				boolean reversedTextMatch=textToMatch.contains(value.toLowerCase()) && textToMatch.contains(reversedSujet.toLowerCase()) && textToMatch.contains("born");
+				if(textMatch || reversedTextMatch){
+				   	results.add(element.text());
 				}
 			}
 			

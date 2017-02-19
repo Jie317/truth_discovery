@@ -24,7 +24,7 @@ public class GuiControleur implements ActionListener{
 	String valeur;
 	int page =1; // default value
 	
-	Map<String, ArrayList<String>> results;
+	Map<String, String> results;
 	ArrayList<String> resultList;
 	
 	
@@ -60,7 +60,7 @@ public class GuiControleur implements ActionListener{
 			gui.getPage().setText(Integer.toString(page));
 						
 			// Afficher les résultats
-			results = Scraper.getResults(sujet, "Born In", valeur, page);
+			results = Scraper.getResults(sujet.replace("_", " "), "Born In", valeur, page);
 			
 			if (results.size() == 0) {
 				JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -70,19 +70,22 @@ public class GuiControleur implements ActionListener{
 			}
 			
 			resultList = new ArrayList<String>();
-    		for (Map.Entry<String, ArrayList<String>> entry: 
+    		for (Map.Entry<String, String> entry: 
     				results.entrySet()){
     			String url = entry.getKey();
-    			ArrayList<String> contexts = entry.getValue();
+    			String context = entry.getValue();
     			
-       			for(String context: contexts){
-    				String item = "<html>From URL: " + url + "<br>Context: " 
-    						+ context + "<br><br></html>";
-    				resultList.add(context);
+    			if(context.equals(""))
+    				continue;
+    			
+    			String item = "<html>From URL: " + url + "<br>Context: " 
+    					+ context + "<br><br></html>";
+    			
+    			resultList.add(context);
     				
-    				System.out.println(item);
-    				gui.getListModel().addElement(item);
-    			}	
+    			System.out.println(item);
+    			gui.getListModel().addElement(item);
+    			
     		}
 		}
 		
