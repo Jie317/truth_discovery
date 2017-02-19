@@ -16,9 +16,9 @@ public class App
 {
     public static void main( String[] args )
     {
-//    	User u = new User();
+    	User u  = new User("charlie.auzet@gmail.com",4);
 //		Log l = new Log(u);
-    	testsJie_queryGUI(0); // replace 0 by usrID
+    	testsJie_queryGUI(u.getUserId()); 
 //    	testsCharlie();
     }
     
@@ -35,7 +35,7 @@ public class App
     }
     
     public static void testsJie_queryGUI(int userID){
-    	GuiControleur guiControleur = new GuiControleur(new User("charlie.auzet@gmail.com",4));
+    	GuiControleur guiControleur = new GuiControleur(userID);
     	GUI gui = new GUI("BornIn query", guiControleur);
     	guiControleur.setGui(gui);
     	gui.getFrame().setVisible(true);

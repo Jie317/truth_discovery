@@ -4,11 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
 import ema.mission.model.Scraper;
-import ema.mission.model.User;
 import ema.mission.view.GUI;
 
 
@@ -18,7 +18,7 @@ public class GuiControleur implements ActionListener{
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
 	private GUI gui;
-	private User user;
+	private int userID;
 	
 	String sujet;
 	String valeur;
@@ -28,9 +28,9 @@ public class GuiControleur implements ActionListener{
 	ArrayList<String> resultList;
 	
 	
-	public GuiControleur(User user) {
+	public GuiControleur(int userID) {
 		super();
-		this.user = user;
+		this.userID = userID;
 	}
 	
 	@Override
@@ -44,7 +44,7 @@ public class GuiControleur implements ActionListener{
 	
 			// get the search tuple from database
 			// example
-			String[] queryPair = Bdd.getFirstUnjudgedValue(this.user.getUserId());
+			String[] queryPair = Bdd.getFirstUnjudgedValue(userID);
 			
 			if (queryPair.length != 2) {
 				JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -60,7 +60,7 @@ public class GuiControleur implements ActionListener{
 			gui.getPage().setText(Integer.toString(page));
 						
 			// Afficher les résultats
-			results = Scraper.getResults(sujet.replace("_", " "), "Born In", valeur, page);
+			results = Scraper.getResults(sujet, "Born In", valeur, page);
 			
 			if (results.size() == 0) {
 				JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -70,47 +70,34 @@ public class GuiControleur implements ActionListener{
 			}
 			
 			resultList = new ArrayList<String>();
-    		for (Map.Entry<String, String> entry: 
-    				results.entrySet()){
+    		for (Entry<String, String> entry: results.entrySet()){
     			String url = entry.getKey();
     			String context = entry.getValue();
     			
-    			if(context.equals(""))
-    				continue;
-    			
-    			String item = "<html>From URL: " + url + "<br>Context: " 
-    					+ context + "<br><br></html>";
-    			
-    			resultList.add(context);
-    				
-    			System.out.println(item);
-    			gui.getListModel().addElement(item);
-    			
+				String item = "<html>From URL: " + url + "<br>Context: " 
+						+ context + "<br><br></html>";
+				resultList.add(context);
+				
+				System.out.println(item);
+				gui.getListModel().addElement(item);
     		}
 		}
 		
 		// Accepter
     	if (command.equals(ACCEPTER)) {
-    		System.out.println("Accepting selected items...");
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
     		
     		for (int i: indicesChoisis) {
-    			System.out.println(i);
-    			gui.getListModel().remove(i);
+    			storeToDatabase(resultList.get(i), true); 
     		}
-    		// On store tout le texte, pas les paragraphes séparés
-			storeToDatabase(resultList.toString(), true); 
     	}
     		
 		// Refuser
     	if (command.equals(REFUSER)) {
-    		System.out.println("Deleting refused items...");
     		int[] indicesChoisis1 = gui.getResults().getSelectedIndices();
     		for (int i: indicesChoisis1) {
-    			gui.getListModel().remove(i);
+    			storeToDatabase(resultList.get(i), false); 
     		}
-    		//Même s'il refuse, il a quand même émis un jugement, donc on le store
-    		storeToDatabase(resultList.toString(), false);
     	}
 		
     	//TODO: wrap lines
@@ -118,8 +105,8 @@ public class GuiControleur implements ActionListener{
 	}
 
 	private void storeToDatabase(String text, boolean accepted) {
-		System.out.println("Storing selected paragraph: " + text);
-		Bdd.addJugement(sujet, valeur, text, this.user.getUserId(), accepted);
+		System.out.println("Storing selected items: " + text);
+		Bdd.addJugement(sujet, valeur, text, userID, accepted);
 	}
 
 	public String getRECHERCHER() {
