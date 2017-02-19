@@ -108,13 +108,17 @@ public class GUI {
 		listModel = new DefaultListModel<>();
 		results = new JList<String>(listModel);
 //		results.setCellRenderer(new MyCellRenderer());
-		results.setSelectionModel(new DefaultListSelectionModel() {
+		results.setSelectionModel(new DefaultListSelectionModel() 
+		{
 		    @Override
-		    public void setSelectionInterval(int index0, int index1) {
-		        if(super.isSelectedIndex(index0)) {
+		    public void setSelectionInterval(int index0, int index1)
+		    {
+		        if(super.isSelectedIndex(index0))
+		        {
 		            super.removeSelectionInterval(index0, index1);
 		        }
-		        else {
+		        else 
+		        {
 		            super.addSelectionInterval(index0, index1);
 		        }
 		    }

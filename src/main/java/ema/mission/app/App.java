@@ -13,7 +13,7 @@ public class App
     {
     	User u  = new User("charlie.auzet@gmail.com",4);
 		Log l = new Log(u);
-    	testsJie_queryGUI(u.getUserId()); 
+    	testsJie_queryGUI(u); 
 //    	testsCharlie();
     }
     
@@ -29,8 +29,8 @@ public class App
     	excel.display(); 	
     }
     
-    public static void testsJie_queryGUI(int userID){
-    	GuiControleur guiControleur = new GuiControleur(userID);
+    public static void testsJie_queryGUI(User u){
+    	GuiControleur guiControleur = new GuiControleur(u);
     	GUI gui = new GUI("BornIn query", guiControleur);
     	guiControleur.setGui(gui);
     	gui.getFrame().setVisible(true);
