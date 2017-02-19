@@ -43,7 +43,7 @@ public class Scraper {
 				+ "+" + valeur + "&as_eq=&as_nlo=&as_nhi=&lr=lang_en&cr=countryCA&as_qdr=all&as_sitesearch=&as_occt=any&safe=images&tbs=&as_filetype=&as_rights="
 				+ nbPage;
 		try {
-			doc = Jsoup.connect(url).userAgent("Mozilla").ignoreHttpErrors(true).timeout(0).get();
+			doc = Jsoup.connect(url).userAgent("Mozilla").ignoreHttpErrors(true).timeout(10000).get();
 			Elements divResult = doc.getElementsByClass("g");
 			
 			loop:
@@ -82,7 +82,7 @@ public class Scraper {
 		ArrayList<String> results=new ArrayList<String>();
 		
 		try {
-			doc = Jsoup.connect(url).userAgent("Mozilla").ignoreHttpErrors(true).timeout(0).get();
+			doc = Jsoup.connect(url).userAgent("Mozilla").ignoreHttpErrors(true).timeout(10000).get();
 			Elements elements=doc.body().select("*");
 
 			
