@@ -3,9 +3,15 @@ package ema.mission.model;
 public class User {
 
 	private String email;
+	private int userId;
 	
 	public User(String email){
 		this.setEmail(email);
+	}
+	
+	public User(String email, int userId){
+		this.email=email;
+		this.userId=userId;
 	}
 	
 	
@@ -44,5 +50,13 @@ public class User {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 }
