@@ -3,28 +3,19 @@ package ema.mission.view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import ema.mission.controller.GuiControleur;
 
 import javax.swing.JList;
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
-import javax.swing.JCheckBox;
 
 public class GUI {
 	private GuiControleur guiControleur;
@@ -128,11 +119,10 @@ public class GUI {
 		    }
 		});
 	
-		results.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), 
-				"R\u00E9sultats sur Google", TitledBorder.CENTER, TitledBorder.TOP, 
-				null, new Color(255, 200, 0)));
+		results.setBorder(new TitledBorder(new LineBorder(new Color(184, 207,
+				229)), "R\u00E9sultats sur Google", TitledBorder.CENTER, 
+				TitledBorder.TOP, null, new Color(255, 200, 0)));
 		results.setVisibleRowCount(10);
-		
 		
 		showResults = new JScrollPane(results);
 		showResults.setBounds(10, 80, 780, 450);

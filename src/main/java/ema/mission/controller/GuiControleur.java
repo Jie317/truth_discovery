@@ -1,48 +1,58 @@
 package ema.mission.controller;
 
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 
 import ema.mission.model.Scraper;
 import ema.mission.view.GUI;
 
 
-
 public class GuiControleur implements ActionListener{
+
 	final String RECHERCHER = "rechercher";
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
 	private GUI gui;
+	private int userID;
 	
-	String sujet = "Picasso";
-	String valeur = "Malaga";
-	int page =1;
+	String sujet;
+	String valeur;
+	int page =1; // default value
 	
 	Map<String, ArrayList<String>> results;
 	ArrayList<String> resultList;
-	ArrayList<String> accepted;
+	
+	
+	public GuiControleur(int userID) {
+		super();
+		this.userID = userID;
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
 		String command = e.getActionCommand();
+		
 		// Rechercher
 		if (command.equals(RECHERCHER)) {
 			System.out.println("Rechercher ... ");
 			gui.getListModel().clear();
-
 	
 			// get the search tuple from database
 			// example
-			sujet = "Picasso";
-			valeur = "Malaga";
-			page =1;
+			String[] queryPair = Bdd.getFirstUnjudgedValue(userID);
+			
+			if (queryPair.length != 2) {
+				JOptionPane.showMessageDialog(gui.getFrame(), 
+					"Paire de requête non-valide", "", 
+					JOptionPane.OK_OPTION);
+				return;
+			}
+			sujet = queryPair[0];
+			valeur = queryPair[1];
 			
 			gui.getSujet().setText(sujet);
 			gui.getValeur().setText(valeur);
@@ -52,25 +62,25 @@ public class GuiControleur implements ActionListener{
 			results = Scraper.getResults(sujet, "Born In", valeur, page);
 			
 			if (results.size() == 0) {
-				JOptionPane.showMessageDialog(gui.getFrame(), "Rien trouvé.",
-					"", JOptionPane.OK_OPTION);
-				
+				JOptionPane.showMessageDialog(gui.getFrame(), 
+					"Rien trouvé.", "", 
+					JOptionPane.OK_OPTION);
+				return;
 			}
 			
 			resultList = new ArrayList<String>();
-    		for (Map.Entry<String, ArrayList<String>> entry: results.entrySet()){
+    		for (Map.Entry<String, ArrayList<String>> entry: 
+    				results.entrySet()){
     			String url = entry.getKey();
     			ArrayList<String> contexts = entry.getValue();
     			
        			for(String context: contexts){
     				String item = "<html>From URL: " + url + "<br>Context: " 
     						+ context + "<br><br></html>";
-    				resultList.add(item);
+    				resultList.add(context);
     				
     				System.out.println(item);
     				gui.getListModel().addElement(item);
-    				
-    				
     			}	
     		}
 		}
@@ -78,14 +88,12 @@ public class GuiControleur implements ActionListener{
 		// Accepter
     	if (command.equals(ACCEPTER)) {
     		System.out.println("Accepting selected items...");
-    		accepted = new ArrayList<String>();
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
     		
     		for (int i: indicesChoisis) {
     			System.out.println(i);
     			gui.getListModel().remove(i);
-    			accepted.add(resultList.get(i));
-    			storeToDatabase(accepted); 
+    			storeToDatabase(resultList.get(i)); 
     		}
     	}
     		
@@ -102,17 +110,9 @@ public class GuiControleur implements ActionListener{
 		
 	}
 
-	private void storeToDatabase(ArrayList<String> accepted2) {
-		// TODO Auto-generated method stub
-		System.out.println("Storing selected paragraphs...");
-		
-	}
-
-	public void setGui(GUI gui) {
-		this.gui = gui;
-		gui.getSujet().setText(sujet);
-		gui.getValeur().setText(valeur);
-		gui.getPage().setText(Integer.toString(page));
+	private void storeToDatabase(String text) {
+		System.out.println("Storing selected paragraph: " + text);
+		Bdd.addJugement(sujet, valeur, text, userID, true);
 	}
 
 	public String getRECHERCHER() {
@@ -125,6 +125,10 @@ public class GuiControleur implements ActionListener{
 
 	public String getREFUSER() {
 		return REFUSER;
+	}
+
+	public void setGui(GUI gui) {
+		this.gui = gui;
 	}
 	
 
