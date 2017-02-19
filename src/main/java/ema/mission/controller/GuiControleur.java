@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import ema.mission.model.Scraper;
+import ema.mission.model.User;
 import ema.mission.view.GUI;
 
 
@@ -17,7 +18,7 @@ public class GuiControleur implements ActionListener{
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
 	private GUI gui;
-	private int userID;
+	private User user;
 	
 	String sujet;
 	String valeur;
@@ -27,9 +28,9 @@ public class GuiControleur implements ActionListener{
 	ArrayList<String> resultList;
 	
 	
-	public GuiControleur(int userID) {
+	public GuiControleur(User user) {
 		super();
-		this.userID = userID;
+		this.user = user;
 	}
 	
 	@Override
@@ -43,7 +44,7 @@ public class GuiControleur implements ActionListener{
 	
 			// get the search tuple from database
 			// example
-			String[] queryPair = Bdd.getFirstUnjudgedValue(userID);
+			String[] queryPair = Bdd.getFirstUnjudgedValue(this.user.getUserId());
 			
 			if (queryPair.length != 2) {
 				JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -112,7 +113,7 @@ public class GuiControleur implements ActionListener{
 
 	private void storeToDatabase(String text) {
 		System.out.println("Storing selected paragraph: " + text);
-		Bdd.addJugement(sujet, valeur, text, userID, true);
+		Bdd.addJugement(sujet, valeur, text, this.user.getUserId(), true);
 	}
 
 	public String getRECHERCHER() {

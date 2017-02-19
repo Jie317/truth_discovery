@@ -54,7 +54,7 @@ public class App
     }
     
     public static void testsJie_queryGUI(int userID){
-    	GuiControleur guiControleur = new GuiControleur(userID);
+    	GuiControleur guiControleur = new GuiControleur(new User("charlie.auzet@gmail.com",4));
     	GUI gui = new GUI("BornIn query", guiControleur);
     	guiControleur.setGui(gui);
     	gui.getFrame().setVisible(true);
