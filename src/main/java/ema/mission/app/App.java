@@ -1,13 +1,8 @@
 package ema.mission.app;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Scanner;
-
 import ema.mission.controller.Bdd;
 import ema.mission.controller.GuiControleur;
 import ema.mission.model.Excel;
-import ema.mission.model.Scraper;
 import ema.mission.model.User;
 import ema.mission.view.GUI;
 import ema.mission.view.Log;
@@ -17,7 +12,7 @@ public class App
     public static void main( String[] args )
     {
     	User u  = new User("charlie.auzet@gmail.com",4);
-//		Log l = new Log(u);
+		Log l = new Log(u);
     	testsJie_queryGUI(u.getUserId()); 
 //    	testsCharlie();
     }
@@ -39,6 +34,7 @@ public class App
     	GUI gui = new GUI("BornIn query", guiControleur);
     	guiControleur.setGui(gui);
     	gui.getFrame().setVisible(true);
+    	
     
     }
     

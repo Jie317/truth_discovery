@@ -22,17 +22,52 @@ public class GuiControleur implements ActionListener{
 	
 	String sujet;
 	String valeur;
-	int page =1; // default value
+	final int page =1; // default value
 	
 	Map<String, String> results;
 	ArrayList<String> resultList;
+	static private ArrayList<Map<String, String> > queueResults = 
+			new ArrayList<Map<String, String> >();
+	static private ArrayList<String[]> queuePairs = new ArrayList<String[]>();
+	static private boolean ready = false;
 	
 	
 	public GuiControleur(int userID) {
 		super();
 		this.userID = userID;
+		queryResultsQueue();
 	}
 	
+	private void queryResultsQueue() {
+		
+		new Thread(){
+
+			@Override
+			public void run() {
+				
+				while (GuiControleur.queueResults.size() < 5){
+					String[] queryPair = Bdd.getFirstUnjudgedValue(userID);
+					
+					if (queryPair == null) {
+						JOptionPane.showMessageDialog(gui.getFrame(), 
+							"Fin de la liste", "", 
+							JOptionPane.OK_OPTION);
+						return;
+					}
+					
+					GuiControleur.getQueuePairs().add(queryPair);
+					sujet = queryPair[0];
+					valeur = queryPair[1];
+					
+					results = Scraper.getResults(sujet, "Born In", valeur, page);
+					GuiControleur.getQueueResults().add(results);
+					
+					
+				}
+			}
+		}.start();
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
@@ -42,16 +77,23 @@ public class GuiControleur implements ActionListener{
 			System.out.println("Rechercher ... ");
 			gui.getListModel().clear();
 	
-			// get the search tuple from database
-			// example
-			String[] queryPair = Bdd.getFirstUnjudgedValue(userID);
+			// check if the result queue is ready
 			
-			if (queryPair.length != 2) {
-				JOptionPane.showMessageDialog(gui.getFrame(), 
-					"Paire de requête non-valide", "", 
-					JOptionPane.OK_OPTION);
-				return;
+			boolean mes = false;
+			while (queueResults.size()==0){
+				if (!mes) {
+					JOptionPane.showMessageDialog(gui.getFrame(), 
+						"Veuillez patienter", "", 
+						JOptionPane.INFORMATION_MESSAGE);
+					mes = true;
+				}
 			}
+			
+			// get the search tuple from pair queue
+			
+			String[] queryPair = queuePairs.get(0);
+			queuePairs.remove(0);
+
 			sujet = queryPair[0];
 			valeur = queryPair[1];
 			
@@ -59,8 +101,9 @@ public class GuiControleur implements ActionListener{
 			gui.getValeur().setText(valeur);
 			gui.getPage().setText(Integer.toString(page));
 						
-			// Afficher les résultats
-			results = Scraper.getResults(sujet, "Born In", valeur, page);
+			// get results from result queue
+			results = queueResults.get(0);
+			queueResults.remove(0);
 			
 			if (results.size() == 0) {
 				JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -123,6 +166,30 @@ public class GuiControleur implements ActionListener{
 
 	public void setGui(GUI gui) {
 		this.gui = gui;
+	}
+
+	public static ArrayList<Map<String, String>> getQueueResults() {
+		return queueResults;
+	}
+
+	public static void setQueueResults(ArrayList<Map<String, String>> queueResults) {
+		GuiControleur.queueResults = queueResults;
+	}
+
+	public static ArrayList<String[]> getQueuePairs() {
+		return queuePairs;
+	}
+
+	public static void setQueuePairs(ArrayList<String[]> queuePairs) {
+		GuiControleur.queuePairs = queuePairs;
+	}
+
+	public static boolean isReady() {
+		return ready;
+	}
+
+	public static void setReady(boolean ready) {
+		GuiControleur.ready = ready;
 	}
 	
 
