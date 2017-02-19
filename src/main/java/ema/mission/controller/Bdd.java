@@ -6,9 +6,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import ema.mission.model.Couple;
+import ema.mission.model.Excel;
 import ema.mission.model.User;
 
 public class Bdd {
@@ -98,15 +103,18 @@ public class Bdd {
 		return u;
 	}
 	
-	public static void updateValeurs(ArrayList<ArrayList<String>> excelSources){
+	public static void updateValeurs(){
 		ArrayList<String> sujetsAlreadyInDb=new ArrayList<>();
 		ArrayList<String> valeursAlreadyInDB= new ArrayList<>();
 
-		
+    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
+    	Excel excel = new Excel(excel_file);
+    	Map<String, List<Couple>> excelResults=excel.readExcel();
+    	
 		PreparedStatement preparedStatement=null;
 
 		Connection conn=ConnectDB();
-		String getValeursQuery="SELECT * FROM Sources";
+		String getValeursQuery="SELECT * FROM Valeurs";
 		String insertValeurQuery="INSERT INTO Valeurs (Sujet, Valeur) VALUES (?,?)";
 		
 		try{
@@ -119,23 +127,26 @@ public class Bdd {
 				valeursAlreadyInDB.add(valeur);
 			}
 		}catch(Exception e){
-			
+			e.printStackTrace();
 		}
 		
-		for(ArrayList<String> valeurs: excelSources){
-			String sujet=valeurs.get(0);
-			for(int i=1;i<valeurs.size();i++){
-				String valeur=valeurs.get(i);
+		for (Entry<String, List<Couple>> entry : excelResults.entrySet()){
+			String sujet=entry.getKey();
+			List<Couple> couples=entry.getValue();
+			for(Couple couple:couples){
+				String valeur=couple.getValeur();
+				String confiance=couple.getConfiance();
 				if(!sujetsAlreadyInDb.contains(sujet) && !valeursAlreadyInDB.contains(valeur)){
 					try {
 						PreparedStatement preparedStatement2=conn.prepareStatement(insertValeurQuery);
+						preparedStatement2.setString(1, sujet);
+						preparedStatement2.setString(2, valeur);
 						preparedStatement2.executeUpdate();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-				}				
+				}
 			}
 		}
 		
@@ -164,11 +175,11 @@ public class Bdd {
 			
 			preparedStatement2=conn.prepareStatement(query2);
 			ResultSet rs2=preparedStatement2.executeQuery();
-			while(rs.next()){
-				int idValeur=rs.getInt("Id");
+			while(rs2.next()){
+				int idValeur=rs2.getInt("Id");
 				if(!alreadySeen.contains(idValeur)){
-					subject=rs.getString("Sujet");
-					value=rs.getString("Valeur");
+					subject=rs2.getString("Sujet");
+					value=rs2.getString("Valeur");
 					ret[0]=subject;
 					ret[1]=value;
 					break;
