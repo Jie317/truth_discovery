@@ -153,6 +153,45 @@ public class Bdd {
 		
 	}
 	
+	public static String[][] getFirstUnjudgedValues(int userId, int numberOfResults){
+		PreparedStatement preparedStatement=null;
+		PreparedStatement preparedStatement2=null;
+		String subject="";
+		String value="";
+		String[][] ret=new String[numberOfResults][2];
+		
+		Connection conn=ConnectDB();
+		String query="SELECT * FROM Jugements WHERE Id_User=?";
+		String query2="SELECT * FROM Valeurs";
+		ArrayList<Integer> alreadySeen=new ArrayList<Integer>();
+		
+		try {
+			preparedStatement=conn.prepareStatement(query);
+			preparedStatement.setInt(1, userId);
+			ResultSet rs=preparedStatement.executeQuery();
+			while(rs.next()){
+				alreadySeen.add(rs.getInt("Id_Valeur"));
+			}
+			
+			preparedStatement2=conn.prepareStatement(query2);
+			ResultSet rs2=preparedStatement2.executeQuery();
+			int i=0;
+			while(rs2.next() && i<5){
+				int idValeur=rs2.getInt("Id");
+				if(!alreadySeen.contains(idValeur)){
+					subject=rs2.getString("Sujet");
+					value=rs2.getString("Valeur");
+					ret[i][0]=subject;
+					ret[i][1]=value;
+					i++;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
 	public static String[] getFirstUnjudgedValue(int userId){
 		PreparedStatement preparedStatement=null;
 		PreparedStatement preparedStatement2=null;
