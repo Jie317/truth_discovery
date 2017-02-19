@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
+import org.apache.poi.hssf.util.HSSFColor.TURQUOISE;
+
 import ema.mission.model.Scraper;
 import ema.mission.model.User;
 import ema.mission.view.GUI;
@@ -20,8 +22,11 @@ public class GuiControleur implements ActionListener
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
 	final String CHARGEREXCEL = "Charger Excel";
-	private GUI gui;
+	static private GUI gui;
 	private int userID;
+	private boolean judged = false;
+	private boolean onStartJudged = true;
+	
 	
 	String sujet;
 	String valeur;
@@ -33,7 +38,7 @@ public class GuiControleur implements ActionListener
 			new ArrayList<Map<String, String> >();
 	static private ArrayList<String[]> queuePairs = new ArrayList<String[]>();
 	static private boolean ready = false;
-	
+	static private boolean onStart = true;
 	
 	public GuiControleur(User u) 
 	{
@@ -66,9 +71,16 @@ public class GuiControleur implements ActionListener
 							return;
 						}
 						
-						GuiControleur.getQueuePairs().add(queryPair);
-						sujet = queryPair[0];
 						valeur = queryPair[1];
+						sujet = queryPair[0];
+						// show the pair on starting the GUI
+						if (GuiControleur.isOnStart()) {
+							GuiControleur.gui.getSujet().setText(sujet);
+							GuiControleur.gui.getValeur().setText(valeur);
+							GuiControleur.setOnStart(false);
+						}
+						
+						GuiControleur.getQueuePairs().add(queryPair);
 						
 						results = Scraper.getResults(sujet.replace("_", " "), "Born In", valeur.replace("_", " "), page);
 						GuiControleur.getQueueResults().add(results);
@@ -91,8 +103,15 @@ public class GuiControleur implements ActionListener
 		// Rechercher
 		if (command.equals(RECHERCHER))
 		{
+			if (!judged && !onStartJudged) {
+				JOptionPane.showMessageDialog(gui.getFrame(), 
+						"Veuillez juger la contexte.", "", 
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 			System.out.println("Rechercher ... ");
+			// initilise 
 			gui.getListModel().clear();
+			judged = false;
 	
 			// check if the result queue is ready
 			
@@ -150,6 +169,8 @@ public class GuiControleur implements ActionListener
 		// Accepter
     	if (command.equals(ACCEPTER)) 
     	{
+    		judged = true;
+    		onStartJudged = false;
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
     		
     		for (int i: indicesChoisis) 
@@ -161,6 +182,8 @@ public class GuiControleur implements ActionListener
 		// Refuser
     	if (command.equals(REFUSER)) 
     	{
+    		judged = true;
+    		onStartJudged = false;
     		int[] indicesChoisis1 = gui.getResults().getSelectedIndices();
     		for (int i: indicesChoisis1) 
     		{
@@ -234,6 +257,18 @@ public class GuiControleur implements ActionListener
 
 	public String getCHARGEREXCEL() {
 		return CHARGEREXCEL;
+	}
+
+	public static boolean isOnStart() {
+		return onStart;
+	}
+
+	public static void setOnStart(boolean onStart) {
+		GuiControleur.onStart = onStart;
+	}
+
+	public GUI getGui() {
+		return gui;
 	}
 	
 

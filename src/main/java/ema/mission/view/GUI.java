@@ -52,7 +52,7 @@ public class GUI {
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(250, 10, 500, 30);
+		panel.setBounds(180, 10, 600, 30);
 		frame.getContentPane().add(panel);
 		panel.setLayout(new GridLayout(1, 5, 0, 0));
 		
@@ -81,6 +81,7 @@ public class GUI {
 		page = new JTextField();
 		page.setEditable(false);
 		panel.add(page);
+		page.setText("1");
 		page.setColumns(3);
 		
 		JPanel panel_1 = new JPanel();
@@ -137,7 +138,7 @@ public class GUI {
 		
 		JButton btnChargerExcel = new JButton(guiControleur.getCHARGEREXCEL());
 		btnChargerExcel.addActionListener(guiControleur);
-		btnChargerExcel.setBounds(38, 13, 105, 27);
+		btnChargerExcel.setBounds(12, 13, 150, 27);
 		frame.getContentPane().add(btnChargerExcel);
 		
 	}

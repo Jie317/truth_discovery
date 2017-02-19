@@ -298,6 +298,9 @@ public class Bdd {
 			insertJugementQuery=conn.prepareStatement(jugementQuery);
 			insertJugementQuery.setInt(1, valeurId);
 			insertJugementQuery.setBoolean(2, accepted);
+			if (text.length() >= 10000){
+				text = text.substring(0, 10000);
+			}
 			insertJugementQuery.setString(3, text);
 			insertJugementQuery.setInt(4, idUser);
 			insertJugementQuery.executeUpdate();
