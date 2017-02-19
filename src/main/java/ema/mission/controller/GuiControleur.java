@@ -94,8 +94,9 @@ public class GuiControleur implements ActionListener{
     		for (int i: indicesChoisis) {
     			System.out.println(i);
     			gui.getListModel().remove(i);
-    			storeToDatabase(resultList.get(i)); 
     		}
+    		// On store tout le texte, pas les paragraphes séparés
+			storeToDatabase(resultList.toString(), true); 
     	}
     		
 		// Refuser
@@ -105,15 +106,17 @@ public class GuiControleur implements ActionListener{
     		for (int i: indicesChoisis1) {
     			gui.getListModel().remove(i);
     		}
+    		//Même s'il refuse, il a quand même émis un jugement, donc on le store
+    		storeToDatabase(resultList.toString(), false);
     	}
 		
     	//TODO: wrap lines
 		
 	}
 
-	private void storeToDatabase(String text) {
+	private void storeToDatabase(String text, boolean accepted) {
 		System.out.println("Storing selected paragraph: " + text);
-		Bdd.addJugement(sujet, valeur, text, this.user.getUserId(), true);
+		Bdd.addJugement(sujet, valeur, text, this.user.getUserId(), accepted);
 	}
 
 	public String getRECHERCHER() {
