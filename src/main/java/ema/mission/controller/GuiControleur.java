@@ -19,6 +19,7 @@ public class GuiControleur implements ActionListener
 	final String RECHERCHER = "rechercher";
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
+	final String CHARGEREXCEL = "Charger Excel";
 	private GUI gui;
 	private int userID;
 	
@@ -55,7 +56,7 @@ public class GuiControleur implements ActionListener
 					while (GuiControleur.queueResults.size() < 5)
 					{
 						debug_mark = true;
-						String[] queryPair = Bdd.getFirstUnjudgedValue(userID);
+						String[] queryPair = Bdd.getNextUnjudgedPair(userID);
 						
 						if (queryPair == null) 
 						{
@@ -167,6 +168,10 @@ public class GuiControleur implements ActionListener
     		}
     	}
 		
+    	if (command.equals(CHARGEREXCEL)) {
+			// Call method here
+		}
+    	
     	//TODO: wrap lines
 		
 	}
@@ -225,6 +230,10 @@ public class GuiControleur implements ActionListener
 	public static void setReady(boolean ready)
 	{
 		GuiControleur.ready = ready;
+	}
+
+	public String getCHARGEREXCEL() {
+		return CHARGEREXCEL;
 	}
 	
 

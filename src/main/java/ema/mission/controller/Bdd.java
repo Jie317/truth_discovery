@@ -17,6 +17,10 @@ import ema.mission.model.Excel;
 import ema.mission.model.User;
 
 public class Bdd {
+	
+	// to store all the unjudged pairs
+	static ArrayList<String[]> unjudgedPairs = new ArrayList<String[]>();
+	
 	/**
 	 * Méthode de connexion à la base de données.
 	 * @return Connection
@@ -176,7 +180,7 @@ public class Bdd {
 			preparedStatement2=conn.prepareStatement(query2);
 			ResultSet rs2=preparedStatement2.executeQuery();
 			int i=0;
-			while(rs2.next() && i<5){
+			while(rs2.next() && i<numberOfResults){
 				int idValeur=rs2.getInt("Id");
 				if(!alreadySeen.contains(idValeur)){
 					subject=rs2.getString("Sujet");
@@ -230,6 +234,49 @@ public class Bdd {
 		return ret;
 	}
 	
+//	 a generator to yield next unjudged pair, consisting of the 
+//	following two methods:
+	
+	public static String[] getNextUnjudgedPair(int userId) {
+		retrieveUnjudgedPairs(userId);
+		return unjudgedPairs.get(NumberGenerator.next());
+	}
+	
+	public static void retrieveUnjudgedPairs(int userId){
+		PreparedStatement preparedStatement=null;
+		PreparedStatement preparedStatement2=null;
+		String subject="";
+		String value="";
+		String[] ret=new String[2];
+		
+		Connection conn=ConnectDB();
+		String query="SELECT * FROM Jugements WHERE Id_User=?";
+		String query2="SELECT * FROM Valeurs";
+		ArrayList<Integer> alreadySeen=new ArrayList<Integer>();
+		
+		try {
+			preparedStatement=conn.prepareStatement(query);
+			preparedStatement.setInt(1, userId);
+			ResultSet rs=preparedStatement.executeQuery();
+			while(rs.next()){
+				alreadySeen.add(rs.getInt("Id_Valeur"));
+			}
+			
+			preparedStatement2=conn.prepareStatement(query2);
+			ResultSet rs2=preparedStatement2.executeQuery();
+			while(rs2.next()){
+				int idValeur=rs2.getInt("Id");
+				if(!alreadySeen.contains(idValeur)){
+					subject=rs2.getString("Sujet");
+					value=rs2.getString("Valeur");
+					unjudgedPairs.add(new String[]{subject, value});
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void addJugement(String sujet, String valeur, String text, int idUser , boolean accepted){
 		PreparedStatement getValeurIdQuery=null;
 		PreparedStatement insertJugementQuery=null;
@@ -259,5 +306,16 @@ public class Bdd {
 			e.printStackTrace();
 		}
 
+	}
+	
+	// index generator to return continuous natural number from 0
+	public static class NumberGenerator
+	{
+		static private int i = 0;
+	 
+		static public int next()
+        {
+			return i++;
+        }
 	}
 }
