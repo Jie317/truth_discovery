@@ -56,7 +56,7 @@ public class GUI {
 		frame.getContentPane().add(panel);
 		panel.setLayout(new GridLayout(1, 5, 0, 0));
 		
-		JLabel lblNewLabel = new JLabel("Subjet");
+		JLabel lblNewLabel = new JLabel("Sujet");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblNewLabel);
 		

@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import com.mysql.cj.api.jdbc.Statement;
+
 import ema.mission.model.Couple;
 import ema.mission.model.Excel;
 import ema.mission.model.User;
@@ -72,9 +74,10 @@ public class Bdd {
 			ResultSet rs=preparedStatement.executeQuery();
 			if(rs.first()){
 				String pwd=rs.getString("password");
+				int id=rs.getInt("Id");
 				boolean connected=BCrypt.checkpw(password, pwd);
 				if(connected){
-					u=new User(email);
+					u=new User(email, id);
 				}else{
 					u=new User("WrongPassword");
 				}
@@ -96,10 +99,14 @@ public class Bdd {
 		
 		String hashPass=BCrypt.hashpw(password, BCrypt.gensalt());
 		try{
-			preparedStatement=conn.prepareStatement(query);
+			preparedStatement=conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setString(1, email);
 			preparedStatement.setString(2, hashPass);
 			preparedStatement.executeUpdate();
+			ResultSet generatedKeys=preparedStatement.getGeneratedKeys();
+			if(generatedKeys.next()){
+				u=new User(email, generatedKeys.getInt("Id"));
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -152,9 +159,7 @@ public class Bdd {
 					}
 				}
 			}
-		}
-		
-		
+		}	
 	}
 	
 	public static String[][] getFirstUnjudgedValues(int userId, int numberOfResults){
