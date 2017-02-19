@@ -59,7 +59,7 @@ public class GuiControleur implements ActionListener{
 					sujet = queryPair[0];
 					valeur = queryPair[1];
 					
-					results = Scraper.getResults(sujet, "Born In", valeur, page);
+					results = Scraper.getResults(sujet.replace("_", " "), "Born In", valeur.replace("_", " "), page);
 					GuiControleur.getQueueResults().add(results);
 					
 					

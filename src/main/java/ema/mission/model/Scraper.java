@@ -68,6 +68,8 @@ public class Scraper {
 			
 			loop:
 			for (Element e : divResult) {
+				if(e.getElementsByClass("r").size()==0)
+					continue;
 				String titre = e.getElementsByClass("r").get(0).text();
 				String lien = e.getElementsByClass("r").get(0).getElementsByAttribute("href").attr("href")
 						.replace("/url?q=", "");
