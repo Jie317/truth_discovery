@@ -158,7 +158,7 @@ public class GuiControleur implements ActionListener
 			System.out.println("Paire suivant ... ");
 			// initilise 
 			gui.getListModel().clear();
-			
+
 			// get the search tuple from pair queue
 			
 			String[] queryPair = queuePairs.get(0);

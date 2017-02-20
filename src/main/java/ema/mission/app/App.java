@@ -11,9 +11,9 @@ public class App
 {
     public static void main( String[] args )
     {
-    	User u  = new User("charlie.auzet@gmail.com",4);
+    	User u  = new User();
 		Log l = new Log(u);
-    	testsJie_queryGUI(u); 
+//    	testsJie_queryGUI(u); 
 //    	testsCharlie();
     }
     

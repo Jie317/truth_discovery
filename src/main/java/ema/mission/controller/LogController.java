@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JOptionPane;
 
 import ema.mission.model.User;
+import ema.mission.view.GUI;
 import ema.mission.view.Log;
 
 public class LogController implements ActionListener, KeyListener {
@@ -57,10 +58,21 @@ public class LogController implements ActionListener, KeyListener {
 					Bdd.createUser(email, password);	
 					//Puis ferme cette vue et ouvre la nouvelle avec :
 					this.user=new User(email);
+			    	GuiControleur guiControleur = new GuiControleur(this.user);
+			    	GUI gui = new GUI("BornIn query", guiControleur);
+			    	guiControleur.setGui(gui);
+			    	gui.getFrame().setVisible(true);
+			    	this.view.dispose();
+					
 				}
 			}else if(this.user.getEmail().equals("WrongPassword")){
 				JOptionPane.showMessageDialog(this.view,"Mauvais mot de passe","Erreur mot de passe",JOptionPane.ERROR_MESSAGE);
 			}else{
+		    	GuiControleur guiControleur = new GuiControleur(this.user);
+		    	GUI gui = new GUI("BornIn query", guiControleur);
+		    	guiControleur.setGui(gui);
+		    	gui.getFrame().setVisible(true);
+		    	this.view.dispose();
 				//Fermer cette vue et ouvrir la nouvelle
 			}
 		}
