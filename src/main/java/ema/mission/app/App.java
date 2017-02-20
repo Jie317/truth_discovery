@@ -34,6 +34,7 @@ public class App
     	GUI gui = new GUI("BornIn query", guiControleur);
     	guiControleur.setGui(gui);
     	gui.getFrame().setVisible(true);
+    	guiControleur.onStart();
     	
     
     }

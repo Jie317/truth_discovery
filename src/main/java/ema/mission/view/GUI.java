@@ -18,6 +18,7 @@ import java.awt.Color;
 import javax.swing.border.LineBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class GUI {
 	private GuiControleur guiControleur;
@@ -61,24 +62,27 @@ public class GUI {
 		panel.add(lblNewLabel);
 		
 		sujet = new JTextField();
+		sujet.setFont(new Font("Dialog", Font.PLAIN, 10));
 		sujet.setEditable(false);
 		panel.add(sujet);
-		sujet.setColumns(8);
+		sujet.setColumns(30);
 		
 		JLabel lblNewLabel_1 = new JLabel("Valeur");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblNewLabel_1);
 		
 		valeur = new JTextField();
+		valeur.setFont(new Font("Dialog", Font.PLAIN, 10));
 		valeur.setEditable(false);
 		panel.add(valeur);
-		valeur.setColumns(8);
+		valeur.setColumns(30);
 		
 		JLabel lblPage = new JLabel("Page");
 		lblPage.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblPage);
 		
 		page = new JTextField();
+		page.setFont(new Font("Dialog", Font.PLAIN, 10));
 		page.setEditable(false);
 		panel.add(page);
 		page.setText("1");
@@ -88,7 +92,7 @@ public class GUI {
 		panel_1.setBounds(0, 40, 800, 35);
 		frame.getContentPane().add(panel_1);
 		
-		JButton btnNewButton = new JButton(guiControleur.getRECHERCHER());
+		JButton btnNewButton = new JButton(guiControleur.getPAIRESUIVANT());
 		btnNewButton.addActionListener(guiControleur);
 		panel_1.add(btnNewButton);
 		

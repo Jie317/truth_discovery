@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.poi.ss.formula.functions.Index;
 import org.mindrot.jbcrypt.BCrypt;
 
 import ema.mission.model.Couple;
@@ -238,8 +239,15 @@ public class Bdd {
 //	following two methods:
 	
 	public static String[] getNextUnjudgedPair(int userId) {
-		retrieveUnjudgedPairs(userId);
-		return unjudgedPairs.get(NumberGenerator.next());
+		if (unjudgedPairs.isEmpty()) {
+			System.out.println(">>>> Retriveing unjudged pair list");
+			retrieveUnjudgedPairs(userId); 
+		}
+		int index = NumberGenerator.next();
+		if (index >= unjudgedPairs.size()) {
+			return null;
+		}
+		return unjudgedPairs.get(index);
 	}
 	
 	public static void retrieveUnjudgedPairs(int userId){

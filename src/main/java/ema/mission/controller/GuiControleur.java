@@ -18,21 +18,19 @@ import ema.mission.view.GUI;
 public class GuiControleur implements ActionListener
 {
 
-	final String RECHERCHER = "rechercher";
+	final String PAIRESUIVANT = "Paire suivant";
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
 	final String CHARGEREXCEL = "Charger Excel";
 	static private GUI gui;
 	private int userID;
-	private boolean judged = false;
-	private boolean onStartJudged = true;
 	
 	
 	String sujet;
 	String valeur;
 	final int page =1; // default value
 	
-	Map<String, String> results;
+	Map<String, String> fisrtResultInQueue;
 	ArrayList<String> resultList;
 	static private ArrayList<Map<String, String> > queueResults = 
 			new ArrayList<Map<String, String> >();
@@ -44,7 +42,58 @@ public class GuiControleur implements ActionListener
 	{
 		super();
 		this.userID = u.getUserId();
+
+	}
+	
+	
+	public void onStart() {
+		String[] queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
+		
+		if (queryPairOnStart == null) 
+		{
+			JOptionPane.showMessageDialog(gui.getFrame(), 
+				"Fin de la liste", "", 
+				JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		
+		sujet = queryPairOnStart[0];
+		valeur = queryPairOnStart[1];
+		gui.getSujet().setText(sujet);
+		gui.getValeur().setText(valeur);
+		Map<String, String> pairResultsOnStart = Scraper.getResults(sujet.
+				replace("_", " "), "Born In", 
+				valeur.replace("_", " "), page);
+		
+		resultList = new ArrayList<String>();
+		if (pairResultsOnStart.size() != 0)
+		{
+			for (Entry<String, String> entry: pairResultsOnStart.entrySet())
+			{
+				String url = entry.getKey();
+				String context = entry.getValue();
+				
+				String item = "<html>From URL: " + url + "<br>Context: " 
+						+ context + "<br><br></html>";
+				resultList.add(context);
+				
+				System.out.println(item);
+				gui.getListModel().addElement(item);
+			}
+		}
+
 		queryResultsQueue();
+		
+		if (pairResultsOnStart.size() == 0)
+		{
+			JOptionPane.showMessageDialog(gui.getFrame(), 
+				"Rien trouvé pour ce pair.", "", 
+				JOptionPane.INFORMATION_MESSAGE);
+		}
+		ready = true;
+		
+		
 	}
 	
 	private void queryResultsQueue() 
@@ -57,38 +106,35 @@ public class GuiControleur implements ActionListener
 			{
 				while (true) 
 				{
-					boolean debug_mark = false;
-					while (GuiControleur.queueResults.size() < 5)
+					if (GuiControleur.queueResults.size() < 5)
 					{
-						debug_mark = true;
 						String[] queryPair = Bdd.getNextUnjudgedPair(userID);
 						
 						if (queryPair == null) 
 						{
 							JOptionPane.showMessageDialog(gui.getFrame(), 
 								"Fin de la liste", "", 
-								JOptionPane.OK_OPTION);
+								JOptionPane.INFORMATION_MESSAGE);
 							return;
 						}
 						
 						valeur = queryPair[1];
 						sujet = queryPair[0];
-						// show the pair on starting the GUI
-						if (GuiControleur.isOnStart()) {
-							GuiControleur.gui.getSujet().setText(sujet);
-							GuiControleur.gui.getValeur().setText(valeur);
-							GuiControleur.setOnStart(false);
-						}
 						
 						GuiControleur.getQueuePairs().add(queryPair);
 						
-						results = Scraper.getResults(sujet.replace("_", " "), "Born In", valeur.replace("_", " "), page);
-						GuiControleur.getQueueResults().add(results);
-						
+						Map<String, String> pairResults = Scraper.getResults(
+								sujet.replace("_", " "), "Born In", 
+								valeur.replace("_", " "), page);
+						GuiControleur.getQueueResults().add(pairResults);
+						System.out.println(">>>> Cached results + : " + 
+								GuiControleur.queueResults.size());
 					}
-					if (debug_mark) 
-					{
-						System.out.println("5 results for the next 5 pairs cached.");
+
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -99,33 +145,19 @@ public class GuiControleur implements ActionListener
 	public void actionPerformed(ActionEvent e) 
 	{
 		String command = e.getActionCommand();
+		if (!ready || queueResults.isEmpty()) {
+			JOptionPane.showMessageDialog(gui.getFrame(), 
+					"Veuillez patienter", "", 
+					JOptionPane.INFORMATION_MESSAGE);
+			return; 
+		}
 		
-		// Rechercher
-		if (command.equals(RECHERCHER))
+		// Pair suivant
+		if (command.equals(PAIRESUIVANT))
 		{
-			if (!judged && !onStartJudged) {
-				JOptionPane.showMessageDialog(gui.getFrame(), 
-						"Veuillez juger la contexte.", "", 
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			System.out.println("Rechercher ... ");
+			System.out.println("Paire suivant ... ");
 			// initilise 
 			gui.getListModel().clear();
-			judged = false;
-	
-			// check if the result queue is ready
-			
-			boolean mes = false;
-			while (queueResults.size()==0)
-			{
-				if (!mes) 
-				{
-					JOptionPane.showMessageDialog(gui.getFrame(), 
-						"Veuillez patienter", "", 
-						JOptionPane.INFORMATION_MESSAGE);
-					mes = true;
-				}
-			}
 			
 			// get the search tuple from pair queue
 			
@@ -140,19 +172,21 @@ public class GuiControleur implements ActionListener
 			gui.getPage().setText(Integer.toString(page));
 						
 			// get results from result queue
-			results = queueResults.get(0);
+			fisrtResultInQueue = queueResults.get(0);
 			queueResults.remove(0);
+			System.out.println(">>>> Cached results - : " + 
+					queueResults.size());
 			
-			if (results.size() == 0) 
+			if (fisrtResultInQueue.size() == 0) 
 			{
 				JOptionPane.showMessageDialog(gui.getFrame(), 
-					"Rien trouvé.", "", 
-					JOptionPane.OK_OPTION);
+					"Rien trouvé pour ce pair.", "", 
+					JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			
 			resultList = new ArrayList<String>();
-    		for (Entry<String, String> entry: results.entrySet())
+    		for (Entry<String, String> entry: fisrtResultInQueue.entrySet())
     		{
     			String url = entry.getKey();
     			String context = entry.getValue();
@@ -164,33 +198,20 @@ public class GuiControleur implements ActionListener
 				System.out.println(item);
 				gui.getListModel().addElement(item);
     		}
-		}
 		
-		// Accepter
-    	if (command.equals(ACCEPTER)) 
+		}
+		// Accepter ou  Refuser
+    	if (command.equals(ACCEPTER) || command.equals(REFUSER) ) 
     	{
-    		judged = true;
-    		onStartJudged = false;
+    		boolean accepted = command.equals(ACCEPTER) ? true: false;
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
     		
     		for (int i: indicesChoisis) 
     		{
-    			storeToDatabase(resultList.get(i), true); 
+    			storeToDatabase(resultList.get(i), accepted); 
     		}
     	}
     		
-		// Refuser
-    	if (command.equals(REFUSER)) 
-    	{
-    		judged = true;
-    		onStartJudged = false;
-    		int[] indicesChoisis1 = gui.getResults().getSelectedIndices();
-    		for (int i: indicesChoisis1) 
-    		{
-    			storeToDatabase(resultList.get(i), false); 
-    		}
-    	}
-		
     	if (command.equals(CHARGEREXCEL)) {
 			// Call method here
 		}
@@ -205,10 +226,6 @@ public class GuiControleur implements ActionListener
 		Bdd.addJugement(sujet, valeur, text, userID, accepted);
 	}
 
-	public String getRECHERCHER() 
-	{
-		return RECHERCHER;
-	}
 
 	public String getACCEPTER()
 	{
@@ -245,16 +262,6 @@ public class GuiControleur implements ActionListener
 		GuiControleur.queuePairs = queuePairs;
 	}
 
-	public static boolean isReady() 
-	{
-		return ready;
-	}
-
-	public static void setReady(boolean ready)
-	{
-		GuiControleur.ready = ready;
-	}
-
 	public String getCHARGEREXCEL() {
 		return CHARGEREXCEL;
 	}
@@ -269,6 +276,10 @@ public class GuiControleur implements ActionListener
 
 	public GUI getGui() {
 		return gui;
+	}
+
+	public String getPAIRESUIVANT() {
+		return PAIRESUIVANT;
 	}
 	
 
