@@ -118,6 +118,7 @@ public class GuiControleur implements ActionListener
 			boolean mes = false;
 			while (queueResults.size()==0)
 			{
+				//le problème est ici
 				if (!mes) 
 				{
 					JOptionPane.showMessageDialog(gui.getFrame(), 
