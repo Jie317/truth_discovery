@@ -2,6 +2,7 @@ package ema.mission.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,7 +48,13 @@ public class GuiControleur implements ActionListener
 	
 	
 	public void onStart() {
-		String[] queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
+		String[] queryPairOnStart=null;
+		try {
+			queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if (queryPairOnStart == null) 
 		{
@@ -108,7 +115,13 @@ public class GuiControleur implements ActionListener
 				{
 					if (GuiControleur.queueResults.size() < 5)
 					{
-						String[] queryPair = Bdd.getNextUnjudgedPair(userID);
+						String[] queryPair=null;
+						try {
+							queryPair = Bdd.getNextUnjudgedPair(userID);
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 						if (queryPair == null) 
 						{
@@ -223,7 +236,12 @@ public class GuiControleur implements ActionListener
 	private void storeToDatabase(String text, boolean accepted) 
 	{
 		System.out.println("Storing selected items: " + text);
-		Bdd.addJugement(sujet, valeur, text, userID, accepted);
+		try {
+			Bdd.addJugement(sujet, valeur, text, userID, accepted);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 

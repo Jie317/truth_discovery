@@ -1,5 +1,7 @@
 package ema.mission.app;
 
+import java.sql.SQLException;
+
 import ema.mission.controller.Bdd;
 import ema.mission.controller.GuiControleur;
 import ema.mission.model.Excel;
@@ -19,7 +21,12 @@ public class App
     
     public static void testsCharlie(){
 
-		User u=Bdd.authenticate("charlie.auzet@gmail.com", "sltcava");
+		try {
+			User u=Bdd.authenticate("charlie.auzet@gmail.com", "sltcava");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public static void testsPierre(){
