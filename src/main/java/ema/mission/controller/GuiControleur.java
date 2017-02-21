@@ -8,8 +8,6 @@ import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
-import org.apache.poi.hssf.util.HSSFColor.TURQUOISE;
-
 import ema.mission.model.Scraper;
 import ema.mission.model.User;
 import ema.mission.view.GUI;
@@ -18,7 +16,7 @@ import ema.mission.view.GUI;
 public class GuiControleur implements ActionListener
 {
 
-	final String PAIRESUIVANT = "Paire suivant";
+	final String PAIRESUIVANT = "Paire suivante";
 	final String ACCEPTER = "accepter";
 	final String REFUSER = "refuser";
 	final String CHARGEREXCEL = "Charger Excel";
@@ -57,7 +55,6 @@ public class GuiControleur implements ActionListener
 			return;
 		}
 		
-		
 		sujet = queryPairOnStart[0];
 		valeur = queryPairOnStart[1];
 		gui.getSujet().setText(sujet);
@@ -88,7 +85,7 @@ public class GuiControleur implements ActionListener
 		if (pairResultsOnStart.size() == 0)
 		{
 			JOptionPane.showMessageDialog(gui.getFrame(), 
-				"Rien trouvé pour ce pair.", "", 
+				"Rien trouvé pour cette paire.", "", 
 				JOptionPane.INFORMATION_MESSAGE);
 		}
 		ready = true;
@@ -155,7 +152,7 @@ public class GuiControleur implements ActionListener
 		// Pair suivant
 		if (command.equals(PAIRESUIVANT))
 		{
-			System.out.println("Paire suivant ... ");
+			System.out.println("Paire suivante ... ");
 			// initilise 
 			gui.getListModel().clear();
 
@@ -180,7 +177,7 @@ public class GuiControleur implements ActionListener
 			if (fisrtResultInQueue.size() == 0) 
 			{
 				JOptionPane.showMessageDialog(gui.getFrame(), 
-					"Rien trouvé pour ce pair.", "", 
+					"Rien trouvé pour cette paire.", "", 
 					JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -239,7 +236,7 @@ public class GuiControleur implements ActionListener
 
 	public void setGui(GUI gui) 
 	{
-		this.gui = gui;
+		GuiControleur.gui = gui;
 	}
 
 	public static ArrayList<Map<String, String>> getQueueResults() 
