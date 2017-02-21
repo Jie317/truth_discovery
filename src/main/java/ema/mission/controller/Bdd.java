@@ -27,8 +27,9 @@ public class Bdd {
 	/**
 	 * Méthode de connexion à la base de données.
 	 * @return Connection
+	 * @throws SQLException 
 	 * */
-	public static Connection ConnectDB() {
+	public static Connection ConnectDB() throws SQLException {
 
 		Connection conn = null;
 		// Récupérer le Driver
@@ -40,17 +41,11 @@ public class Bdd {
 		}
 
 		if (conn == null) {
-			try {
+
 				conn = DriverManager.getConnection("jdbc:mysql://51.254.124.54:3306/TruthDiscovery", "Truth",
 						"QqxVYbH6Jfa42L4h");
 				System.out.println("Okk !");
 
-			} catch (SQLException ex) {
-
-				System.out.println("SQLException: " + ex.getMessage());
-				System.out.println("SQLState: " + ex.getSQLState());
-				System.out.println("VendorError: " + ex.getErrorCode());
-			}
 		}
 		return conn;
 	}
@@ -58,8 +53,9 @@ public class Bdd {
 	/**
 	 * Méthode pour authentifier un utilisateur.
 	 * @return User
+	 * @throws SQLException 
 	 * */
-	public static User authenticate(String email, String password){
+	public static User authenticate(String email, String password) throws SQLException{
 		
 		Connection conn=null;
 		PreparedStatement preparedStatement = null;
@@ -90,7 +86,7 @@ public class Bdd {
 		return u;
 	}
 	
-	public static User createUser(String email, String password){
+	public static User createUser(String email, String password) throws SQLException{
 		
 		PreparedStatement preparedStatement=null;
 		User u=null;
@@ -115,7 +111,7 @@ public class Bdd {
 		return u;
 	}
 	
-	public static void updateValeurs(){
+	public static void updateValeurs() throws SQLException{
 		ArrayList<String> sujetsAlreadyInDb=new ArrayList<>();
 		ArrayList<String> valeursAlreadyInDB= new ArrayList<>();
 
@@ -163,7 +159,7 @@ public class Bdd {
 		}	
 	}
 	
-	public static String[][] getFirstUnjudgedValues(int userId, int numberOfResults){
+	public static String[][] getFirstUnjudgedValues(int userId, int numberOfResults) throws SQLException{
 		PreparedStatement preparedStatement=null;
 		PreparedStatement preparedStatement2=null;
 		String subject="";
@@ -202,7 +198,7 @@ public class Bdd {
 		return ret;
 	}
 	
-	public static String[] getFirstUnjudgedValue(int userId){
+	public static String[] getFirstUnjudgedValue(int userId) throws SQLException{
 		PreparedStatement preparedStatement=null;
 		PreparedStatement preparedStatement2=null;
 		String subject="";
@@ -243,7 +239,7 @@ public class Bdd {
 //	 a generator to yield next unjudged pair, consisting of the 
 //	following two methods:
 	
-	public static String[] getNextUnjudgedPair(int userId) {
+	public static String[] getNextUnjudgedPair(int userId) throws SQLException {
 		if (unjudgedPairs.isEmpty()) {
 			System.out.println(">>>> Retriveing unjudged pair list");
 			retrieveUnjudgedPairs(userId); 
@@ -255,7 +251,7 @@ public class Bdd {
 		return unjudgedPairs.get(index);
 	}
 	
-	public static void retrieveUnjudgedPairs(int userId){
+	public static void retrieveUnjudgedPairs(int userId) throws SQLException{
 		PreparedStatement preparedStatement=null;
 		PreparedStatement preparedStatement2=null;
 		String subject="";
@@ -290,7 +286,7 @@ public class Bdd {
 		}
 	}
 	
-	public static void addJugement(String sujet, String valeur, String text, int idUser , boolean accepted){
+	public static void addJugement(String sujet, String valeur, String text, int idUser , boolean accepted) throws SQLException{
 		PreparedStatement getValeurIdQuery=null;
 		PreparedStatement insertJugementQuery=null;
 		Connection conn=ConnectDB();

@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
@@ -33,8 +34,13 @@ public class LogController implements ActionListener, KeyListener {
 			} else if (e.getSource() == this.view.getPass()) {
 				this.view.getBtnConnexion().requestFocusInWindow();
 			} else if (e.getSource() == this.view.getBtnConnexion()) {
-				this.user = Bdd.authenticate(this.view.getEmail().getText(),
-						new String(this.view.getPass().getPassword()));
+				try {
+					this.user = Bdd.authenticate(this.view.getEmail().getText(),
+							new String(this.view.getPass().getPassword()));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
@@ -48,33 +54,44 @@ public class LogController implements ActionListener, KeyListener {
 		String email=this.view.getEmail().getText();
 		String password=new String(this.view.getPass().getPassword());
 		if (e.getSource() == this.view.getBtnConnexion()) {
-			this.user = Bdd.authenticate(email, password);
-			
-			if(this.user==null){		
-				//Montrer la popup "Cet utilisateur n'existe pas, voulez-vous le créer ?"
-				int option = JOptionPane.showConfirmDialog(null, "Cet utilisateur n'existe pas, voulez-vous le créer ?", "Création utilisateur", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if(option == JOptionPane.OK_OPTION){
-					//Si oui, appelle :
-					Bdd.createUser(email, password);	
-					//Puis ferme cette vue et ouvre la nouvelle avec :
-					this.user=new User(email);
+			try {
+				this.user = Bdd.authenticate(email, password);
+				if(this.user==null){		
+					//Montrer la popup "Cet utilisateur n'existe pas, voulez-vous le créer ?"
+					int option = JOptionPane.showConfirmDialog(null, "Cet utilisateur n'existe pas, voulez-vous le créer ?", "Création utilisateur", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if(option == JOptionPane.OK_OPTION){
+						//Si oui, appelle :
+						try {
+							Bdd.createUser(email, password);
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}	
+						//Puis ferme cette vue et ouvre la nouvelle avec :
+						this.user=new User(email);
+				    	GuiControleur guiControleur = new GuiControleur(this.user);
+				    	GUI gui = new GUI("BornIn query", guiControleur);
+				    	guiControleur.setGui(gui);
+				    	gui.getFrame().setVisible(true);
+				    	this.view.dispose();
+						
+					}
+				}else if(this.user.getEmail().equals("WrongPassword")){
+					JOptionPane.showMessageDialog(this.view,"Mauvais mot de passe","Erreur mot de passe",JOptionPane.ERROR_MESSAGE);
+				}else{
 			    	GuiControleur guiControleur = new GuiControleur(this.user);
 			    	GUI gui = new GUI("BornIn query", guiControleur);
 			    	guiControleur.setGui(gui);
 			    	gui.getFrame().setVisible(true);
 			    	this.view.dispose();
-					
+					//Fermer cette vue et ouvrir la nouvelle
 				}
-			}else if(this.user.getEmail().equals("WrongPassword")){
-				JOptionPane.showMessageDialog(this.view,"Mauvais mot de passe","Erreur mot de passe",JOptionPane.ERROR_MESSAGE);
-			}else{
-		    	GuiControleur guiControleur = new GuiControleur(this.user);
-		    	GUI gui = new GUI("BornIn query", guiControleur);
-		    	guiControleur.setGui(gui);
-		    	gui.getFrame().setVisible(true);
-		    	this.view.dispose();
-				//Fermer cette vue et ouvrir la nouvelle
+			} catch (SQLException e2) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(this.view,"La connexion à la base de données n'a pas pu être effectuée. Votre pare-feu bloque peut-être le port 3306.","Erreur base de données",JOptionPane.ERROR_MESSAGE);
 			}
+			
+			
 		}
 	}
 
