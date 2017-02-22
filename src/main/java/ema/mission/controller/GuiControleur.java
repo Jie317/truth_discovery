@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ema.mission.model.Scraper;
 import ema.mission.model.User;
@@ -36,6 +38,7 @@ public class GuiControleur implements ActionListener
 	static private ArrayList<String[]> queuePairs = new ArrayList<String[]>();
 	static private boolean ready = false;
 	static private boolean onStart = true;
+	static private boolean updatingExcel=false;
 	
 	public GuiControleur(User u) 
 	{
@@ -46,6 +49,7 @@ public class GuiControleur implements ActionListener
 	
 	
 	public void onStart() {
+		gui.initialize();
 		String[] queryPairOnStart=null;
 		try {
 			queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
@@ -155,6 +159,38 @@ public class GuiControleur implements ActionListener
 	public void actionPerformed(ActionEvent e) 
 	{
 		String command = e.getActionCommand();
+		
+		
+		if (command.equals(CHARGEREXCEL)) {
+		    JFileChooser chooser = new JFileChooser();
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		        "Excel files", "xls", "xlsx");
+		    chooser.setFileFilter(filter);
+		    int returnVal = chooser.showOpenDialog(null);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    	final String path=chooser.getSelectedFile().getPath();
+				new Thread(){
+					@Override
+					public void run(){
+			            try {
+							Bdd.updateValeurs(path);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}.start();
+
+		    }
+
+			// Call method here
+
+		}
+		if(updatingExcel){
+			JOptionPane.showMessageDialog(gui.getFrame(), 
+					"Veuillez patienter", "", 
+					JOptionPane.INFORMATION_MESSAGE);
+			return; 
+		}
 		if (!ready || queueResults.isEmpty()) {
 			JOptionPane.showMessageDialog(gui.getFrame(), 
 					"Veuillez patienter", "", 
@@ -215,16 +251,58 @@ public class GuiControleur implements ActionListener
     	{
     		boolean accepted = command.equals(ACCEPTER) ? true: false;
     		int[] indicesChoisis = gui.getResults().getSelectedIndices();
-    		
+    		String textAccepted="";
     		for (int i: indicesChoisis) 
     		{
-    			storeToDatabase(resultList.get(i), accepted); 
+    			textAccepted+=resultList.get(i);
+    			//storeToDatabase(resultList.get(i), accepted); 
+    		}
+    		storeToDatabase(textAccepted, accepted);
+			System.out.println("Paire suivante ... ");
+			// initilise 
+			gui.getListModel().clear();
+
+			// get the search tuple from pair queue
+			
+			String[] queryPair = queuePairs.get(0);
+			queuePairs.remove(0);
+
+			sujet = queryPair[0];
+			valeur = queryPair[1];
+			
+			gui.getSujet().setText(sujet);
+			gui.getValeur().setText(valeur);
+			gui.getPage().setText(Integer.toString(page));
+						
+			// get results from result queue
+			fisrtResultInQueue = queueResults.get(0);
+			queueResults.remove(0);
+			System.out.println(">>>> Cached results - : " + 
+					queueResults.size());
+			
+			if (fisrtResultInQueue.size() == 0) 
+			{
+				JOptionPane.showMessageDialog(gui.getFrame(), 
+					"Rien trouvé pour cette paire.", "", 
+					JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			
+			resultList = new ArrayList<String>();
+    		for (Entry<String, String> entry: fisrtResultInQueue.entrySet())
+    		{
+    			String url = entry.getKey();
+    			String context = entry.getValue();
+    			
+				String item = "<html>From URL: " + url + "<br>Context: " 
+						+ context + "<br><br></html>";
+				resultList.add(context);
+				
+				System.out.println(item);
+				gui.getListModel().addElement(item);
     		}
     	}
-    		
-    	if (command.equals(CHARGEREXCEL)) {
-			// Call method here
-		}
+
     	
     	//TODO: wrap lines
 		
@@ -232,6 +310,8 @@ public class GuiControleur implements ActionListener
 
 	private void storeToDatabase(String text, boolean accepted) 
 	{
+		System.out.println(text);
+		System.out.println(userID);
 		System.out.println("Storing selected items: " + text);
 		try {
 			Bdd.addJugement(sujet, valeur, text, userID, accepted);

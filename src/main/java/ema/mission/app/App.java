@@ -15,7 +15,7 @@ public class App
     {
     	User u  = new User();
 		Log l = new Log(u);
-    	queryGUI(u); 
+    //	queryGUI(u); 
 //    	testsCharlie();
     }
     

@@ -54,14 +54,18 @@ public class Excel {
 						// starting from
 						// version 4.0
 						if (currentCell.getCellTypeEnum() == CellType.STRING) {
+							if(currentCell.getStringCellValue().contains("ontology"))
+								continue;
 							Pattern p = Pattern.compile("http://dbpedia.org/\\w+/");
 							String[] item = p.split(currentCell.getStringCellValue());
 							List<Couple> valeurs = new ArrayList<Couple>();
 							for (int i = 1; i < item.length; i++) {
 								item[i] = item[i].substring(0, item[i].length() - 1);
 								if (i > 1) {
+
 									String val = item[i].substring(0, item[i].indexOf("\t"));
 									String conf = item[i].substring(item[i].indexOf("\t") + 1);
+									
 									try{
 										val = java.net.URLDecoder.decode(val, "UTF-8");
 										conf = java.net.URLDecoder.decode(conf, "UTF-8");

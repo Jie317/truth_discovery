@@ -62,28 +62,31 @@ public class LogController implements ActionListener, KeyListener {
 					if(option == JOptionPane.OK_OPTION){
 						//Si oui, appelle :
 						try {
-							Bdd.createUser(email, password);
+							this.user=Bdd.createUser(email, password);
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}	
 						//Puis ferme cette vue et ouvre la nouvelle avec :
-						this.user=new User(email);
+				    	this.view.dispose();
 				    	GuiControleur guiControleur = new GuiControleur(this.user);
 				    	GUI gui = new GUI("BornIn query", guiControleur);
 				    	guiControleur.setGui(gui);
 				    	gui.getFrame().setVisible(true);
-				    	this.view.dispose();
+				    	guiControleur.onStart();
+
 						
 					}
 				}else if(this.user.getEmail().equals("WrongPassword")){
 					JOptionPane.showMessageDialog(this.view,"Mauvais mot de passe","Erreur mot de passe",JOptionPane.ERROR_MESSAGE);
 				}else{
+			    	this.view.dispose();
 			    	GuiControleur guiControleur = new GuiControleur(this.user);
 			    	GUI gui = new GUI("BornIn query", guiControleur);
 			    	guiControleur.setGui(gui);
 			    	gui.getFrame().setVisible(true);
-			    	this.view.dispose();
+			    	guiControleur.onStart();
+
 					//Fermer cette vue et ouvrir la nouvelle
 				}
 			} catch (SQLException e2) {

@@ -102,7 +102,8 @@ public class Bdd {
 			preparedStatement.executeUpdate();
 			ResultSet generatedKeys=preparedStatement.getGeneratedKeys();
 			if(generatedKeys.next()){
-				u=new User(email, generatedKeys.getInt("Id"));
+				
+				u=new User(email, generatedKeys.getInt(1));
 			}
 		}catch (Exception e){
 			e.printStackTrace();
@@ -111,19 +112,19 @@ public class Bdd {
 		return u;
 	}
 	
-	public static void updateValeurs() throws SQLException{
+	public static void updateValeurs(String path) throws SQLException{
 		ArrayList<String> sujetsAlreadyInDb=new ArrayList<>();
 		ArrayList<String> valeursAlreadyInDB= new ArrayList<>();
 
-    	String excel_file = System.getProperty("user.dir") + "/resources/k_top_values_200.xlsx";
+    	String excel_file = path;
     	Excel excel = new Excel(excel_file);
     	Map<String, List<Couple>> excelResults=excel.readExcel();
     	
 		PreparedStatement preparedStatement=null;
 
-		Connection conn=ConnectDB();
+		final Connection conn=ConnectDB();
 		String getValeursQuery="SELECT * FROM Valeurs";
-		String insertValeurQuery="INSERT INTO Valeurs (Sujet, Valeur) VALUES (?,?)";
+		final String insertValeurQuery="INSERT INTO Valeurs (Sujet, Valeur) VALUES (?,?)";
 		
 		try{
 			preparedStatement=conn.prepareStatement(getValeursQuery);
@@ -139,21 +140,27 @@ public class Bdd {
 		}
 		
 		for (Entry<String, List<Couple>> entry : excelResults.entrySet()){
-			String sujet=entry.getKey();
+			final String sujet=entry.getKey();
 			List<Couple> couples=entry.getValue();
 			for(Couple couple:couples){
-				String valeur=couple.getValeur();
+				final String valeur=couple.getValeur();
 				String confiance=couple.getConfiance();
 				if(!sujetsAlreadyInDb.contains(sujet) && !valeursAlreadyInDB.contains(valeur)){
-					try {
-						PreparedStatement preparedStatement2=conn.prepareStatement(insertValeurQuery);
-						preparedStatement2.setString(1, sujet);
-						preparedStatement2.setString(2, valeur);
-						preparedStatement2.executeUpdate();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					new Thread(){
+						@Override
+						public void run(){
+							try {
+								PreparedStatement preparedStatement2=conn.prepareStatement(insertValeurQuery);
+								preparedStatement2.setString(1, sujet);
+								preparedStatement2.setString(2, valeur);
+								preparedStatement2.executeUpdate();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}.start();
+
 				}
 			}
 		}	
@@ -310,8 +317,12 @@ public class Bdd {
 			if (text.length() >= 10000){
 				text = text.substring(0, 10000);
 			}
-			insertJugementQuery.setString(3, text);
+			insertJugementQuery.setString(3, "salut");
 			insertJugementQuery.setInt(4, idUser);
+			System.out.println(valeurId);
+			System.out.println(accepted);
+			System.out.println(text);
+			System.out.println(idUser);
 			insertJugementQuery.executeUpdate();
 		} catch (SQLException e) {
 
