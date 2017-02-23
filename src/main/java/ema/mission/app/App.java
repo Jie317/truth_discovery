@@ -14,8 +14,8 @@ public class App
     public static void main( String[] args )
     {
     	User u  = new User();
-		Log l = new Log(u);
-    //	queryGUI(u); 
+//		Log l = new Log(u);
+    	queryGUI(new User("jie@gmail.com", 8)); 
 //    	testsCharlie();
     }
     

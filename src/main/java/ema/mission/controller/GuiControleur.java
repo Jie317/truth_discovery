@@ -91,7 +91,8 @@ public class GuiControleur implements ActionListener
 			}
 		}
 
-		queryResultsQueue();
+		new queryResultsQueue().start();
+		System.out.println(">>> Thread started...");
 		
 		if (pairResultsOnStart.size() == 0)
 		{
@@ -104,55 +105,47 @@ public class GuiControleur implements ActionListener
 		
 	}
 	
-	private void queryResultsQueue() 
+	public class queryResultsQueue extends Thread 
 	{
-		
-		new Thread()
-		{
-			@Override
-			public void run() 
-			{
-				while (true) 
-				{
-					if (GuiControleur.queueResults.size() < 5)
-					{
-						String[] queryPair=null;
-						try {
-							queryPair = Bdd.getNextUnjudgedPair(userID);
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-						if (queryPair == null) 
-						{
-							JOptionPane.showMessageDialog(gui.getFrame(), 
-								"Fin de la liste", "", 
-								JOptionPane.INFORMATION_MESSAGE);
-							return;
-						}
-						
-						valeur = queryPair[1];
-						sujet = queryPair[0];
-						
-						GuiControleur.getQueuePairs().add(queryPair);
-						
-						Map<String, String> pairResults = Scraper.getResults(
-								sujet.replace("_", " "), "Born In", 
-								valeur.replace("_", " "), page);
-						GuiControleur.getQueueResults().add(pairResults);
-						System.out.println(">>>> Cached results + : " + 
-								GuiControleur.queueResults.size());
-					}
 
+		@Override
+		public void run() 
+		{
+			while (true) 
+			{
+				if (GuiControleur.queueResults.size() < 5)
+				{
+					String[] queryPair=null;
 					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
+						queryPair = Bdd.getNextUnjudgedPair(userID);
+						System.out.println("userID: " + userID);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
+					if (queryPair == null) 
+					{
+						JOptionPane.showMessageDialog(gui.getFrame(), 
+							"Fin de la liste", "", 
+							JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+					
+					valeur = queryPair[1];
+					sujet = queryPair[0];
+					
+					GuiControleur.getQueuePairs().add(queryPair);
+					
+					Map<String, String> pairResults = Scraper.getResults(
+							sujet.replace("_", " "), "Born In", 
+							valeur.replace("_", " "), page);
+					GuiControleur.getQueueResults().add(pairResults);
+					System.out.println(">>>> Cached results + : " + 
+							GuiControleur.queueResults.size());
 				}
 			}
-		}.start();
+		}
 	}
 
 	@Override
