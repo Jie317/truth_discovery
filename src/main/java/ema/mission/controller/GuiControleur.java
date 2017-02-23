@@ -144,6 +144,12 @@ public class GuiControleur implements ActionListener
 					System.out.println(">>>> Cached results + : " + 
 							GuiControleur.queueResults.size());
 				}
+				try {
+					sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -253,49 +259,7 @@ public class GuiControleur implements ActionListener
     			//storeToDatabase(resultList.get(i), accepted); 
     		}
     		storeToDatabase(textAccepted, accepted);
-			System.out.println("Paire suivante ... ");
-			// initilise 
-			gui.getListModel().clear();
 
-			// get the search tuple from pair queue
-			
-			String[] queryPair = queuePairs.get(0);
-			queuePairs.remove(0);
-
-			sujet = queryPair[0];
-			valeur = queryPair[1];
-			
-			gui.getSujet().setText(sujet);
-			gui.getValeur().setText(valeur);
-			gui.getPage().setText(Integer.toString(page));
-						
-			// get results from result queue
-			fisrtResultInQueue = queueResults.get(0);
-			queueResults.remove(0);
-			System.out.println(">>>> Cached results - : " + 
-					queueResults.size());
-			
-			if (fisrtResultInQueue.size() == 0) 
-			{
-				JOptionPane.showMessageDialog(gui.getFrame(), 
-					"Rien trouvé pour cette paire.", "", 
-					JOptionPane.INFORMATION_MESSAGE);
-				return;
-			}
-			
-			resultList = new ArrayList<String>();
-    		for (Entry<String, String> entry: fisrtResultInQueue.entrySet())
-    		{
-    			String url = entry.getKey();
-    			String context = entry.getValue();
-    			
-				String item = "<html>From URL: " + url + "<br>Context: " 
-						+ context + "<br><br></html>";
-				resultList.add(context);
-				
-				System.out.println(item);
-				gui.getListModel().addElement(item);
-    		}
     	}
 
     	
