@@ -126,10 +126,10 @@ public class GuiControleur implements ActionListener
 					
 					if (queryPair == null) 
 					{
-						JOptionPane.showMessageDialog(gui.getFrame(), 
-							"Fin de la liste", "", 
-							JOptionPane.INFORMATION_MESSAGE);
-						return;
+//						JOptionPane.showMessageDialog(gui.getFrame(), 
+//							"Fin de la liste", "", 
+//							JOptionPane.INFORMATION_MESSAGE);
+						continue;
 					}
 					
 					valeur = queryPair[1];
