@@ -317,12 +317,8 @@ public class Bdd {
 			if (text.length() >= 10000){
 				text = text.substring(0, 10000);
 			}
-			insertJugementQuery.setString(3, "salut");
+			insertJugementQuery.setString(3, text);
 			insertJugementQuery.setInt(4, idUser);
-			System.out.println(valeurId);
-			System.out.println(accepted);
-			System.out.println(text);
-			System.out.println(idUser);
 			insertJugementQuery.executeUpdate();
 		} catch (SQLException e) {
 

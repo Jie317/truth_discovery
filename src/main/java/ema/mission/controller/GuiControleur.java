@@ -191,9 +191,24 @@ public class GuiControleur implements ActionListener
 			return; 
 		}
 		
+
+		// Accepter ou  Refuser
+    	if (command.equals(ACCEPTER) || command.equals(REFUSER) ) 
+    	{
+    		boolean accepted = command.equals(ACCEPTER) ? true: false;
+    		int[] indicesChoisis = gui.getResults().getSelectedIndices();
+    		String textAccepted="";
+    		for (int i: indicesChoisis) 
+    		{
+    			textAccepted+=resultList.get(i);
+    			//storeToDatabase(resultList.get(i), accepted); 
+    		}
+    		storeToDatabase(textAccepted, accepted);
+
+    	}
 		
 		// Pair suivant
-		if (command.equals(PAIRESUIVANT))
+		if (command.equals(PAIRESUIVANT) || command.equals(ACCEPTER) || command.equals(REFUSER))
 		{
 			if (!ready || queueResults.isEmpty()) {
 				JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -247,21 +262,6 @@ public class GuiControleur implements ActionListener
     		}
 		
 		}
-		// Accepter ou  Refuser
-    	if (command.equals(ACCEPTER) || command.equals(REFUSER) ) 
-    	{
-    		boolean accepted = command.equals(ACCEPTER) ? true: false;
-    		int[] indicesChoisis = gui.getResults().getSelectedIndices();
-    		String textAccepted="";
-    		for (int i: indicesChoisis) 
-    		{
-    			textAccepted+=resultList.get(i);
-    			//storeToDatabase(resultList.get(i), accepted); 
-    		}
-    		storeToDatabase(textAccepted, accepted);
-
-    	}
-
     	
     	//TODO: wrap lines
 		
