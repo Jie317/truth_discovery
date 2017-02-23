@@ -49,59 +49,59 @@ public class GuiControleur implements ActionListener
 	
 	
 	public void onStart() {
-		gui.initialize();
-		String[] queryPairOnStart=null;
-		try {
-			queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		if (queryPairOnStart == null) 
-		{
-			JOptionPane.showMessageDialog(gui.getFrame(), 
-				"Fin de la liste", "", 
-				JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-		
-		sujet = queryPairOnStart[0];
-		valeur = queryPairOnStart[1];
-		gui.getSujet().setText(sujet);
-		gui.getValeur().setText(valeur);
-		Map<String, String> pairResultsOnStart = Scraper.getResults(sujet.
-				replace("_", " "), "Born In", 
-				valeur.replace("_", " "), page);
-		
-		resultList = new ArrayList<String>();
-		if (pairResultsOnStart.size() != 0)
-		{
-			for (Entry<String, String> entry: pairResultsOnStart.entrySet())
-			{
-				String url = entry.getKey();
-				String context = entry.getValue();
-				
-				String item = "<html>From URL: " + url + "<br>Context: " 
-						+ context + "<br><br></html>";
-				resultList.add(context);
-				
-				System.out.println(item);
-				gui.getListModel().addElement(item);
-			}
-		}
+//		String[] queryPairOnStart=null;
+//		try {
+//			queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		if (queryPairOnStart == null) 
+//		{
+//			JOptionPane.showMessageDialog(gui.getFrame(), 
+//				"Fin de la liste", "", 
+//				JOptionPane.INFORMATION_MESSAGE);
+//			return;
+//		}
+//		
+//		sujet = queryPairOnStart[0];
+//		valeur = queryPairOnStart[1];
+//		gui.getSujet().setText(sujet);
+//		gui.getValeur().setText(valeur);
+//		Map<String, String> pairResultsOnStart = Scraper.getResults(sujet.
+//				replace("_", " "), "Born In", 
+//				valeur.replace("_", " "), page);
+//		
+//		resultList = new ArrayList<String>();
+//		if (pairResultsOnStart.size() != 0)
+//		{
+//			for (Entry<String, String> entry: pairResultsOnStart.entrySet())
+//			{
+//				String url = entry.getKey();
+//				String context = entry.getValue();
+//				
+//				String item = "<html>From URL: " + url + "<br>Context: " 
+//						+ context + "<br><br></html>";
+//				resultList.add(context);
+//				
+//				System.out.println(item);
+//				gui.getListModel().addElement(item);
+//			}
+//		}
 
 		new queryResultsQueue().start();
 		System.out.println(">>> Thread started...");
-		
-		if (pairResultsOnStart.size() == 0)
-		{
-			JOptionPane.showMessageDialog(gui.getFrame(), 
-				"Rien trouvé pour cette paire.", "", 
-				JOptionPane.INFORMATION_MESSAGE);
-		}
+//		
+//		if (pairResultsOnStart.size() == 0)
+//		{
+//			JOptionPane.showMessageDialog(gui.getFrame(), 
+//				"Rien trouvé pour cette paire.", "", 
+//				JOptionPane.INFORMATION_MESSAGE);
+//		}
 		ready = true;
-		
+//		
 		
 	}
 	
@@ -184,16 +184,18 @@ public class GuiControleur implements ActionListener
 					JOptionPane.INFORMATION_MESSAGE);
 			return; 
 		}
-		if (!ready || queueResults.isEmpty()) {
-			JOptionPane.showMessageDialog(gui.getFrame(), 
-					"Veuillez patienter", "", 
-					JOptionPane.INFORMATION_MESSAGE);
-			return; 
-		}
+		
 		
 		// Pair suivant
 		if (command.equals(PAIRESUIVANT))
 		{
+			if (!ready || queueResults.isEmpty()) {
+				JOptionPane.showMessageDialog(gui.getFrame(), 
+						"Veuillez patienter", "", 
+						JOptionPane.INFORMATION_MESSAGE);
+				return; 
+			}
+			
 			System.out.println("Paire suivante ... ");
 			// initilise 
 			gui.getListModel().clear();
