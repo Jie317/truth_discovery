@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ema.mission.model.Scraper;
+import ema.mission.model.SenDetectAndFilter;
 import ema.mission.model.User;
 import ema.mission.view.GUI;
 
@@ -50,59 +52,10 @@ public class GuiControleur implements ActionListener
 	
 	public void onStart() {
 		
-//		String[] queryPairOnStart=null;
-//		try {
-//			queryPairOnStart = Bdd.getNextUnjudgedPair(userID);
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		if (queryPairOnStart == null) 
-//		{
-//			JOptionPane.showMessageDialog(gui.getFrame(), 
-//				"Fin de la liste", "", 
-//				JOptionPane.INFORMATION_MESSAGE);
-//			return;
-//		}
-//		
-//		sujet = queryPairOnStart[0];
-//		valeur = queryPairOnStart[1];
-//		gui.getSujet().setText(sujet);
-//		gui.getValeur().setText(valeur);
-//		Map<String, String> pairResultsOnStart = Scraper.getResults(sujet.
-//				replace("_", " "), "Born In", 
-//				valeur.replace("_", " "), page);
-//		
-//		resultList = new ArrayList<String>();
-//		if (pairResultsOnStart.size() != 0)
-//		{
-//			for (Entry<String, String> entry: pairResultsOnStart.entrySet())
-//			{
-//				String url = entry.getKey();
-//				String context = entry.getValue();
-//				
-//				String item = "<html>From URL: " + url + "<br>Context: " 
-//						+ context + "<br><br></html>";
-//				resultList.add(context);
-//				
-//				System.out.println(item);
-//				gui.getListModel().addElement(item);
-//			}
-//		}
 
 		new queryResultsQueue().start();
 		System.out.println(">>> Thread started...");
-//		
-//		if (pairResultsOnStart.size() == 0)
-//		{
-//			JOptionPane.showMessageDialog(gui.getFrame(), 
-//				"Rien trouvé pour cette paire.", "", 
-//				JOptionPane.INFORMATION_MESSAGE);
-//		}
-		ready = true;
-//		
-		
+		ready = true;	
 	}
 	
 	public class queryResultsQueue extends Thread 
@@ -118,7 +71,6 @@ public class GuiControleur implements ActionListener
 					String[] queryPair=null;
 					try {
 						queryPair = Bdd.getNextUnjudgedPair(userID);
-						System.out.println("userID: " + userID);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -147,7 +99,6 @@ public class GuiControleur implements ActionListener
 				try {
 					sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -173,16 +124,13 @@ public class GuiControleur implements ActionListener
 					public void run(){
 			            try {
 							Bdd.updateValeurs(path);
+							Bdd.retrieveUnjudgedPairs(userID);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}
 					}
 				}.start();
-
 		    }
-
-			// Call method here
-
 		}
 		if(updatingExcel){
 			JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -190,7 +138,6 @@ public class GuiControleur implements ActionListener
 					JOptionPane.INFORMATION_MESSAGE);
 			return; 
 		}
-		
 
 		// Accepter ou  Refuser
     	if (command.equals(ACCEPTER) || command.equals(REFUSER) ) 
@@ -204,7 +151,6 @@ public class GuiControleur implements ActionListener
     			//storeToDatabase(resultList.get(i), accepted); 
     		}
     		storeToDatabase(textAccepted, accepted);
-
     	}
 		
 		// Pair suivant
@@ -222,7 +168,6 @@ public class GuiControleur implements ActionListener
 			gui.getListModel().clear();
 
 			// get the search tuple from pair queue
-			
 			String[] queryPair = queuePairs.get(0);
 			queuePairs.remove(0);
 
@@ -253,18 +198,21 @@ public class GuiControleur implements ActionListener
     			String url = entry.getKey();
     			String context = entry.getValue();
     			
+    			// detect and filter sentences
+    			List<String> sensFiltered = new SenDetectAndFilter().detectAndFilter(context, queryPair);
+    			
+    			String sensFilteredStr = String.join("<br>", sensFiltered);
+    			
 				String item = "<html>From URL: " + url + "<br>Context: " 
-						+ context + "<br><br></html>";
-				resultList.add(context);
+						+ sensFilteredStr + "<br><br></html>";
+				
+				resultList.add(String.join("", sensFiltered)); // format to store in the database
 				
 				System.out.println(item);
-				gui.getListModel().addElement(item);
+				gui.getListModel().addElement(item); // show the URL and context list
     		}
-		
 		}
-    	
     	//TODO: wrap lines
-		
 	}
 
 	private void storeToDatabase(String text, boolean accepted) 
@@ -279,7 +227,6 @@ public class GuiControleur implements ActionListener
 			e.printStackTrace();
 		}
 	}
-
 
 	public String getACCEPTER()
 	{

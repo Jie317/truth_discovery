@@ -248,7 +248,6 @@ public class Bdd {
 	
 	public static String[] getNextUnjudgedPair(int userId) throws SQLException {
 		if (unjudgedPairs.isEmpty()) {
-			System.out.println(">>>> Retriveing unjudged pair list");
 			retrieveUnjudgedPairs(userId); 
 		}
 		int index = NumberGenerator.next();
@@ -259,6 +258,9 @@ public class Bdd {
 	}
 	
 	public static void retrieveUnjudgedPairs(int userId) throws SQLException{
+		System.out.println(">>>> Retriving unjudged pair list");
+		NumberGenerator.init();
+		
 		PreparedStatement preparedStatement=null;
 		PreparedStatement preparedStatement2=null;
 		String subject="";
@@ -332,6 +334,10 @@ public class Bdd {
 	{
 		static private int i = 0;
 	 
+		static public void init()
+		{
+			i = 0;
+		}
 		static public int next()
         {
 			return i++;

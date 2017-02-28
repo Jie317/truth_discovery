@@ -23,5 +23,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="resources/opennlp-tools-1.5.1.jar"/>
+	<classpathentry kind="lib" path="resources/maxent-3.0.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
